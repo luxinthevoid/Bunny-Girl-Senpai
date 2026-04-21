@@ -299,14 +299,18 @@ function setGameOver(on){
     timer.pause(); // Para que dejen de caer piezas.
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
     // Añade el texto centrado indicando que pulsando R reinicias.
-    centerText = game.add.text(game.world.centerX, game.world.centerY,
-      'GAME OVER\n\nPress R to restart', {
-        font: 'bold 32px system-ui, -apple-system, Segoe UI, Roboto, Arial',
-        fill: '#ffffff',
-        align: 'center'
-      }
-    );
-    centerText.anchor.set(0.5); // Centra el eje del texto
+    
+    game.state.start('hof');
+
+    
+                            // centerText = game.add.text(game.world.centerX, game.world.centerY,
+                            //   'GAME OVER\n\nPress R to restart', {
+                            //     font: 'bold 32px system-ui, -apple-system, Segoe UI, Roboto, Arial',
+                            //     fill: '#ffffff',
+                            //     align: 'center'
+                            //   }
+                            // );
+                            // centerText.anchor.set(0.5); // Centra el eje del texto
   }
 };
 
