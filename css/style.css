@@ -1,21 +1,22 @@
 html,
 body {
-  margin: 0;
+  margin: 0; /* Elimina márgenes por defecto del navegador */
   padding: 0;
-  background: #065d85;
+  background: #065d85; /* Un color de fondo azul oscuro para la web */
   color: #ddd;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 #wrap {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
+  display: flex; /* Usamos flexbox para centrar el contenido fácilmente */
+  justify-content: center; /* Centra el juego horizontalmente */
+  align-items: flex-start; /* Alinea el juego a la parte superior */
+  min-height: 100vh; /* Ocupa al menos el 100% del alto de la ventana */
   padding: 24px;
-  box-sizing: border-box;
+  box-sizing: border-box; /* El padding no aumenta el tamaño total del div */
 }
 
 #game {
+  /* Añade una sombra bonita alrededor del canvas creado por Phaser para que destaque */
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
 }
