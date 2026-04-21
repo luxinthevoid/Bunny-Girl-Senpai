@@ -106,7 +106,7 @@ class Tetromino {
 
       this.blocks.push(b); // Lo guarda visualmente.
       this.cells.push([x,y]); // Lo guarda lógicamente.
-  
+
       // Si el punto calculado no es válido, levanta bandera de conflicto.
       if (!this.tetris.validateCoordinates(x,y)) {
         conflict = true;
@@ -265,7 +265,7 @@ function resetGame() {
 // Tick de caída automática (llamada por el timer). Intenta bajar la pieza.
 function fall() {
   if (gameOverState) return; // No hace nada si estás muerto
-  
+
   // Pregunta: ¿Puedo moverme hacia abajo?
   if (tetromino.canMove(tetromino.slide.bind(tetromino),'down')) {
     // Si puedo, muevo la pieza.
@@ -286,7 +286,7 @@ function spawn() {
 
   let start_x = Math.floor(NUMBLOCKS_X/2); // Columna central
   let start_y = y_start[tetromino.shape]; // Fila de inicio predefinida
-  
+
   let conflict = tetromino.create(start_x, start_y);
   // Si al nacer ya está en conflicto (chocando con otra), Game Over.
   if (conflict) setGameOver(true);
@@ -299,10 +299,8 @@ function setGameOver(on){
     timer.pause(); // Para que dejen de caer piezas.
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
     // Añade el texto centrado indicando que pulsando R reinicias.
-    
-    game.state.start('hof');
 
-    
+    game.state.start('hof');
                             // centerText = game.add.text(game.world.centerX, game.world.centerY,
                             //   'GAME OVER\n\nPress R to restart', {
                             //     font: 'bold 32px system-ui, -apple-system, Segoe UI, Roboto, Arial',
@@ -351,7 +349,7 @@ function updateGame() {
   };
 
   // Reinicia el timer para que haya que esperar otros 85ms antes de registrar otro movimiento.
-  currentMovementTimer = 0; 
+  currentMovementTimer = 0;
 };
 
 // Fija la pieza actual convirtiéndola en estado 'OCCUPIED' en la matriz.
