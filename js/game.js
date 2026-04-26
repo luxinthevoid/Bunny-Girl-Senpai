@@ -190,6 +190,7 @@ class Tetromino {
 // Define el estado principal. Phaser llamará a create al inicio y update en bucle a 60fps.
 let gameState = {
   create: resetGame,
+  init: tamanyoCanvasJuego,
   update: updateGame
 };
 
@@ -219,9 +220,20 @@ let currentMovementTimer = 0; // Acumulador para restringir la velocidad de inpu
 let shade, centerText; // Elementos gráficos de la pantalla Game Over
 
 let hudJuego = document.getElementById('HUD');
+let puntos = document.getElementById('intPuntos');
+let nivelActual = document.getElementById('intNivel');
+let tiempo = document.getElementById('intTimer');
 
 let pausado = false; //bool para la pausado
+let nivelSeleccionado;
+let puntosActual = 0;
+let tiempoActual = 0;
+let loopReloj;
 
+function tamanyoCanvasJuego(nivelsel){
+  this.game.scale.setGameSize(gameWidth,gameHeight);
+  nivelSeleccionado = nivelsel;
+};
 
 // Reinicia estado, tablero, HUD, input y temporizador para empezar una partida limpia.
 function resetGame() {
@@ -265,11 +277,24 @@ function resetGame() {
   // Crea un evento repetitivo que llamará a fall() cada INITIAL_FALL_DELAY ms.
   loop = timer.loop(INITIAL_FALL_DELAY, fall, this);
 
+  //Codigo para reloj de partida
+  tiempoActual = 0;
+  loopReloj = timer.loop(1000, actualizarReloj, this);
+
   //mostrar el HUD
   hudJuego.style.display = 'block';
+  nivelActual.innerText = nivelSeleccionado;
+  puntos.innerText = puntosActual;
+  tiempo.innerText = tiempoActual;
 
   spawn(); // Nace la primera pieza
 };
+
+function actualizarReloj(){
+  if(gameOverState) return;
+  tiempoActual++;
+  tiempo.innerText = tiempoActual;
+}
 
 // Tick de caída automática (llamada por el timer). Intenta bajar la pieza.
 function fall() {
@@ -380,6 +405,10 @@ function updateGame() {
       tetromino.move(tetromino.rotate.bind(tetromino), null, 'clockwise');
   };
 
+  //Actualiza el HUD
+  puntos.innerText = puntosActual;
+  tiempo.innertext = timer.
+
   // Reinicia el timer para que haya que esperar otros 85ms antes de registrar otro movimiento.
   currentMovementTimer = 0;
 };
@@ -411,6 +440,7 @@ function checkLines(candidateLines) {
     let y = candidateLines[i];
     // Matemáticas astutas: si la suma de la fila da = (10 celdas * OCCUPIED (2)) = 20, está llena.
     if (lineSum(y) == (NUMBLOCKS_X * OCCUPIED)) {
+      puntosActual+=lineSum(y); //Sumar puntos por linea a puntos en pantalla (no hay multiplicador de momento)
       collapsed.push(y);
       cleanLine(y); // Borra visualmente esa fila
     }

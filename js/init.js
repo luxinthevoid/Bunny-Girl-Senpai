@@ -19,7 +19,7 @@ function createInit(){
     let text_posX=game.world.width * 0.5; //Texto Start
     let text_posY=game.world.height * 0.05;
 
-    btnStart=game.add.button(start_posX,start_posY,'play', startPlay);
+    btnStart=game.add.button(start_posX,start_posY,'play', menuNiveles);
     btnStart.anchor.setTo(0.5,0.5);
     btnStart.scale.setTo(0.15);
 
@@ -27,6 +27,6 @@ function createInit(){
     txtTitulo.anchor.setTo(0.5, 0.5);
 }
 
-function startPlay(){
-    game.state.start('play');
+function menuNiveles(){
+    game.state.start('niveles');
 }
