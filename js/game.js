@@ -218,6 +218,8 @@ let timer, loop; // Temporizador nativo de Phaser y el bucle para la gravedad.
 let currentMovementTimer = 0; // Acumulador para restringir la velocidad de input lateral
 let shade, centerText; // Elementos gráficos de la pantalla Game Over
 
+let hudJuego = document.getElementById('HUD');
+
 
 // Reinicia estado, tablero, HUD, input y temporizador para empezar una partida limpia.
 function resetGame() {
@@ -259,6 +261,9 @@ function resetGame() {
   // Crea un evento repetitivo que llamará a fall() cada INITIAL_FALL_DELAY ms.
   loop = timer.loop(INITIAL_FALL_DELAY, fall, this);
 
+  //mostrar el HUD
+  hudJuego.style.display = 'block';
+
   spawn(); // Nace la primera pieza
 };
 
@@ -299,6 +304,9 @@ function setGameOver(on){
     timer.pause(); // Para que dejen de caer piezas.
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
     // Añade el texto centrado indicando que pulsando R reinicias.
+
+    //apagamos el HUD del juego
+    hudJuego.style.display = 'none';
 
     game.state.start('hof');
                             // centerText = game.add.text(game.world.centerX, game.world.centerY,
