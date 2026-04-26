@@ -211,7 +211,7 @@ let move_offsets = {
 
 // Elements for the game
 let tetromino, theTetris; // Pieza actual y tablero
-let cursors, keyRotate, keyRestart, keyHof; // Entradas de teclado
+let cursors, keyRotate, keyRestart, keyHof, keyPausa; // Entradas de teclado
 let gameOverState = false; // Bandera booleana de estado de fin de partida
 
 let timer, loop; // Temporizador nativo de Phaser y el bucle para la gravedad.
@@ -219,6 +219,8 @@ let currentMovementTimer = 0; // Acumulador para restringir la velocidad de inpu
 let shade, centerText; // Elementos gráficos de la pantalla Game Over
 
 let hudJuego = document.getElementById('HUD');
+
+let pausado = false; //bool para la pausado
 
 
 // Reinicia estado, tablero, HUD, input y temporizador para empezar una partida limpia.
@@ -254,6 +256,7 @@ function resetGame() {
   keyRotate = game.input.keyboard.addKey(Phaser.Keyboard.UP);
   keyRestart = game.input.keyboard.addKey(Phaser.Keyboard.R);
   keyHof = game.input.keyboard.addKey(Phaser.Keyboard.Q)
+  keyPausa = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 
   // Se configura el temporizador de gravedad.
   timer = game.time.events;
@@ -328,8 +331,25 @@ function makeShade(alpha){
   shade.endFill();
 };
 
-// Bucle ejecutado a 60 FPS por Phaser. Controla el teclado.
+
 function updateGame() {
+
+  //Control de la pausa
+  if(keyPausa.justDown){
+    if(pausado){
+      pausado=false;
+      timer.resume();
+    } else{
+      pausado=true;
+      timer.pause();
+    }
+  }
+
+  if(!gameOverState)
+    if(pausado)
+      return;
+
+  // Bucle ejecutado a 60 FPS por Phaser. Controla el teclado.
   currentMovementTimer += this.time.elapsed; // Suma el tiempo entre frames
   // Si no ha pasado el lag mínimo (85ms), aborta lectura de teclas para no ir demasiado rápido
   if (currentMovementTimer <= MOVEMENT_LAG) return;
