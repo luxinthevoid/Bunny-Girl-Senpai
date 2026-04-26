@@ -211,7 +211,7 @@ let move_offsets = {
 
 // Elements for the game
 let tetromino, theTetris; // Pieza actual y tablero
-let cursors, keyRotate, keyRestart; // Entradas de teclado
+let cursors, keyRotate, keyRestart, keyHof; // Entradas de teclado
 let gameOverState = false; // Bandera booleana de estado de fin de partida
 
 let timer, loop; // Temporizador nativo de Phaser y el bucle para la gravedad.
@@ -253,6 +253,7 @@ function resetGame() {
   cursors = game.input.keyboard.createCursorKeys();
   keyRotate = game.input.keyboard.addKey(Phaser.Keyboard.UP);
   keyRestart = game.input.keyboard.addKey(Phaser.Keyboard.R);
+  keyHof = game.input.keyboard.addKey(Phaser.Keyboard.Q)
 
   // Se configura el temporizador de gravedad.
   timer = game.time.events;
@@ -303,20 +304,19 @@ function setGameOver(on){
   if (gameOverState) {
     timer.pause(); // Para que dejen de caer piezas.
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
-    // Añade el texto centrado indicando que pulsando R reinicias.
 
     //apagamos el HUD del juego
     hudJuego.style.display = 'none';
 
-    game.state.start('hof');
-                            // centerText = game.add.text(game.world.centerX, game.world.centerY,
-                            //   'GAME OVER\n\nPress R to restart', {
-                            //     font: 'bold 32px system-ui, -apple-system, Segoe UI, Roboto, Arial',
-                            //     fill: '#ffffff',
-                            //     align: 'center'
-                            //   }
-                            // );
-                            // centerText.anchor.set(0.5); // Centra el eje del texto
+    // Añade el texto centrado indicando que pulsando R reinicias.
+    centerText = game.add.text(game.world.centerX, game.world.centerY,
+      'GAME OVER\n\nPress R to restart,\nQ to go to\nHall of Fame', {
+        font: 'bold 32px system-ui, -apple-system, Segoe UI, Roboto, Arial',
+        fill: '#ffffff',
+        align: 'center'
+      }
+    );
+    centerText.anchor.set(0.5); // Centra el eje del texto
   }
 };
 
@@ -338,6 +338,10 @@ function updateGame() {
     // Si estás muerto, solo escucha la tecla R para reiniciar.
     if (keyRestart.isDown)
       resetGame();
+
+    if (keyHof.isDown)
+      game.state.start('hof');
+
     currentMovementTimer = 0;
     return;
   };
