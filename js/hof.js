@@ -20,7 +20,7 @@ function createHof(){
     txtHeader = game.add.text(text_posX,text_posY,'Hall of\nFame', estiloTitulo);
     txtHeader.anchor.setTo(0.5, 0.5);
 
-    btnRestart=game.add.button(posX,posY,'ttt', startPlay);
+    btnRestart=game.add.button(posX,posY,'ttt', menuNiveles);
     btnRestart.anchor.setTo(0.5,0.5);
     btnRestart.scale.setTo(1);
 }

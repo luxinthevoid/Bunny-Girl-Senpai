@@ -70,7 +70,7 @@ class Tetromino {
     this.offsets = {
       0 : [[0,-1],[0,0],[0,1],[1,1]],     // L
       1 : [[0,-1],[0,0],[0,1],[-1,1]],    // J
-      2 : [[-1,0],[0,0],[1,0],[2,0]],     // I (Palo)
+      2 : [[0,0],[0,1],[0,2],[0,3]],     // I (Palo)
       3 : [[-1,-1],[0,-1],[0,0],[-1,0]],  // O (Cuadrado)
       4 : [[-1,0],[0,0],[0,-1],[1,-1]],   // S
       5 : [[-1,0],[0,0],[1,0],[0,1]],     // T
@@ -232,8 +232,11 @@ let tiempoActual = 0;
 let minutos = 0;
 let loopReloj;
 
+let previewShape;
+let previewGraphics = [];
+
 function tamanyoCanvasJuego(nivelsel){
-  this.game.scale.setGameSize(gameWidth,gameHeight);
+  this.game.scale.setGameSize(gameWidth+130,gameHeight);
   nivelSeleccionado = nivelsel;
 };
 
@@ -289,6 +292,8 @@ function resetGame() {
   puntos.innerText = 0;
   tiempo.innerText = '00';
 
+  previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
+
   spawn(); // Nace la primera pieza
 };
 
@@ -328,7 +333,7 @@ function fall() {
 
 // Crea una nueva pieza aleatoria en la parte superior del tablero.
 function spawn() {
-  let shape = Math.floor(Math.random() * N_BLOCK_TYPES); // Saca un número del 0 al 6.
+  let shape = previewShape;
   let color = PIECE_COLOR;
 
   tetromino = new Tetromino(shape, color, theTetris);
@@ -339,7 +344,37 @@ function spawn() {
   let conflict = tetromino.create(start_x, start_y);
   // Si al nacer ya está en conflicto (chocando con otra), Game Over.
   if (conflict) setGameOver(true);
+
+  previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
+  dibujarPreview();
 };
+
+function dibujarPreview(){
+  for(let i = 0; i < previewGraphics.length; i++){
+    previewGraphics[i].destroy();
+  }
+  previewGraphics = [];
+
+  let baseX = gameWidth+55;
+  let baseY = 100;
+  if(previewShape==2)
+    baseY = 50
+
+  let dummy = new Tetromino(previewShape, PIECE_COLOR, null);
+  let offsets = dummy.offsets[previewShape];
+
+  for(let i = 0; i< BLOCKS_PER_TETROMINO; i++){
+    let xPos = baseX + (offsets[i][0]*BLOCKSIZE);
+    let yPos = baseY + (offsets[i][1]*BLOCKSIZE);
+
+    let g = dummy.renderBlock();
+
+    g.x = xPos;
+    g.y = yPos;
+
+    previewGraphics.push(g);
+  }
+}
 
 // Activa/Desactiva el estado de fin de partida y crea la pantalla opaca con texto.
 function setGameOver(on){
