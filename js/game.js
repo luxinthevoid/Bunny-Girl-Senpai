@@ -222,12 +222,14 @@ let shade, centerText; // Elementos gráficos de la pantalla Game Over
 let hudJuego = document.getElementById('HUD');
 let puntos = document.getElementById('intPuntos');
 let nivelActual = document.getElementById('intNivel');
-let tiempo = document.getElementById('intTimer');
+let tiempo = document.getElementById('segundos');
+let txtMinutos = document.getElementById('minutos');
 
 let pausado = false; //bool para la pausado
 let nivelSeleccionado;
 let puntosActual = 0;
 let tiempoActual = 0;
+let minutos = 0;
 let loopReloj;
 
 function tamanyoCanvasJuego(nivelsel){
@@ -284,8 +286,8 @@ function resetGame() {
   //mostrar el HUD
   hudJuego.style.display = 'block';
   nivelActual.innerText = nivelSeleccionado;
-  puntos.innerText = puntosActual;
-  tiempo.innerText = tiempoActual;
+  puntos.innerText = 0;
+  tiempo.innerText = '00';
 
   spawn(); // Nace la primera pieza
 };
@@ -293,7 +295,20 @@ function resetGame() {
 function actualizarReloj(){
   if(gameOverState) return;
   tiempoActual++;
-  tiempo.innerText = tiempoActual;
+  console.log(minutos);
+  if(tiempoActual==60){
+    tiempoActual=0;
+    minutos++;
+  }
+
+  if(minutos<10)
+      txtMinutos.innerText = '0'+ minutos;
+  else txtMinutos.innerText = minutos;
+
+  if(tiempoActual<10){
+    tiempo.innerText = '0'+tiempoActual;
+  }else
+    tiempo.innerText = tiempoActual;
 }
 
 // Tick de caída automática (llamada por el timer). Intenta bajar la pieza.
@@ -371,8 +386,9 @@ function updateGame() {
   }
 
   if(!gameOverState)
-    if(pausado)
+    if(pausado){
       return;
+    }
 
   // Bucle ejecutado a 60 FPS por Phaser. Controla el teclado.
   currentMovementTimer += this.time.elapsed; // Suma el tiempo entre frames
@@ -407,7 +423,6 @@ function updateGame() {
 
   //Actualiza el HUD
   puntos.innerText = puntosActual;
-  tiempo.innertext = timer.
 
   // Reinicia el timer para que haya que esperar otros 85ms antes de registrar otro movimiento.
   currentMovementTimer = 0;
@@ -436,15 +451,28 @@ function lockTetromino() {
 // Revisa las filas tocadas por la pieza recién fijada y aplica limpieza/colapso.
 function checkLines(candidateLines) {
   let collapsed = []; // Líneas a destruir
+  let multiplicador = 0; //multiplicador lineas colapsadas en la misma jugada
+  let puntosJugada = 0;  //puntos de esta jugada
   for (let i = 0; i < candidateLines.length; i++) {
     let y = candidateLines[i];
     // Matemáticas astutas: si la suma de la fila da = (10 celdas * OCCUPIED (2)) = 20, está llena.
     if (lineSum(y) == (NUMBLOCKS_X * OCCUPIED)) {
-      puntosActual+=lineSum(y); //Sumar puntos por linea a puntos en pantalla (no hay multiplicador de momento)
+      puntosJugada+=lineSum(y); //Sumar puntos por linea
       collapsed.push(y);
       cleanLine(y); // Borra visualmente esa fila
     }
   }
+
+  multiplicador = collapsed.length;
+  if(multiplicador==1)
+    puntosActual += puntosJugada;
+  else if(multiplicador==2)
+    puntosActual += puntosJugada*1.5;
+  else if(multiplicador==3)
+    puntosActual += puntosJugada*2;
+  else if(multiplicador==4)
+    puntosActual += puntosJugada*4;
+
   // Si se ha eliminado al menos 1 línea, manda a colapsar (bajar) el resto.
   if (collapsed.length)
     collapse(collapsed);
