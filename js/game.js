@@ -288,8 +288,13 @@ function fall() {
 function spawn() {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   let shape = Math.floor(Math.random() * N_BLOCK_TYPES); // Saca un número del 0 al 6.
   let color = PIECE_COLOR;
+=======
+  let shape = previewShape;
+  let color = PIECE_COLORS[shape];
+>>>>>>> Stashed changes
 =======
   let shape = previewShape;
   let color = PIECE_COLORS[shape];
@@ -373,7 +378,22 @@ function setGameOver(on){
 
 function makeShade(alpha) {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+
+  // crear SOLO una vez
+  if (!shade) {
+    shade = game.add.graphics(0, 0);
+    shade.beginFill(0xC4B7E7, 1);
+    shade.drawRect(0, 0, gameWidth+130, gameHeight);
+    shade.endFill();
+  }
+
+  // solo cambias visibilidad/opacidad
+  shade.alpha = alpha;
+}
+>>>>>>> Stashed changes
 
   // crear SOLO una vez
   if (!shade) {
