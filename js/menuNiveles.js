@@ -25,7 +25,7 @@ function createNiveles(){
     let text_posX=game.world.width * 0.5;
     let text_posY=game.world.height * 0.15;
 
-
+    
     txtHeader = game.add.text(text_posX,text_posY,'Niveles', estiloTitulo);
     txtHeader.anchor.setTo(0.5, 0.5);
 

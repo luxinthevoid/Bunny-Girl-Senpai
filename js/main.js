@@ -10,6 +10,7 @@ window.onload = startGame;
 // 'gameState' es un objeto definido en game.js que contiene las funciones create y update.
 function startGame(){
     game.state.add('init', initState);
+    game.state.add('niveles', nivelesState);
     game.state.add('play', gameState);
     game.state.add('hof',hofState);
 

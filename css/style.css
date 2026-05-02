@@ -26,8 +26,6 @@ body {
 #game {
   /* Añade una sombra bonita alrededor del canvas creado por Phaser para que destaque */
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
-<<<<<<< Updated upstream
-=======
 }
 
 #HUD{
@@ -114,11 +112,5 @@ body {
   left: -238px;
 
   font-family: ari-w9500-bold;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
 }

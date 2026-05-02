@@ -77,7 +77,7 @@ class Tetromino {
     this.offsets = {
       0 : [[0,-1],[0,0],[0,1],[1,1]],     // L
       1 : [[0,-1],[0,0],[0,1],[-1,1]],    // J
-      2 : [[-1,0],[0,0],[1,0],[2,0]],     // I (Palo)
+      2 : [[0,0],[0,1],[0,2],[0,3]],     // I (Palo)
       3 : [[-1,-1],[0,-1],[0,0],[-1,0]],  // O (Cuadrado)
       4 : [[-1,0],[0,0],[0,-1],[1,-1]],   // S
       5 : [[-1,0],[0,0],[1,0],[0,1]],     // T
@@ -197,6 +197,7 @@ class Tetromino {
 // Define el estado principal. Phaser llamará a create al inicio y update en bucle a 60fps.
 let gameState = {
   create: resetGame,
+  init: tamanyoCanvasJuego,
   update: updateGame
 };
 
@@ -218,13 +219,33 @@ let move_offsets = {
 
 // Elements for the game
 let tetromino, theTetris; // Pieza actual y tablero
-let cursors, keyRotate, keyRestart; // Entradas de teclado
+let cursors, keyRotate, keyRestart, keyHof, keyPausa; // Entradas de teclado
 let gameOverState = false; // Bandera booleana de estado de fin de partida
 
 let timer, loop; // Temporizador nativo de Phaser y el bucle para la gravedad.
 let currentMovementTimer = 0; // Acumulador para restringir la velocidad de input lateral
 let shade, centerText; // Elementos gráficos de la pantalla Game Over
 
+let hudJuego = document.getElementById('HUD');
+let puntos = document.getElementById('intPuntos');
+let nivelActual = document.getElementById('intNivel');
+let tiempo = document.getElementById('segundos');
+let txtMinutos = document.getElementById('minutos');
+
+let pausado = false; //bool para la pausado
+let nivelSeleccionado;
+let puntosActual = 0;
+let tiempoActual = 0;
+let minutos = 0;
+let loopReloj;
+
+let previewShape;
+let previewGraphics = [];
+
+function tamanyoCanvasJuego(nivelsel){
+  this.game.scale.setGameSize(gameWidth+130,gameHeight);
+  nivelSeleccionado = nivelsel;
+};
 
 // Reinicia estado, tablero, HUD, input y temporizador para empezar una partida limpia.
 function resetGame() {
@@ -258,6 +279,8 @@ function resetGame() {
   cursors = game.input.keyboard.createCursorKeys();
   keyRotate = game.input.keyboard.addKey(Phaser.Keyboard.UP);
   keyRestart = game.input.keyboard.addKey(Phaser.Keyboard.R);
+  keyHof = game.input.keyboard.addKey(Phaser.Keyboard.Q)
+  keyPausa = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 
   // Se configura el temporizador de gravedad.
   timer = game.time.events;
@@ -266,8 +289,39 @@ function resetGame() {
   // Crea un evento repetitivo que llamará a fall() cada INITIAL_FALL_DELAY ms.
   loop = timer.loop(INITIAL_FALL_DELAY, fall, this);
 
+  //Codigo para reloj de partida
+  tiempoActual = 0;
+  loopReloj = timer.loop(1000, actualizarReloj, this);
+
+  //mostrar el HUD
+  hudJuego.style.display = 'block';
+  nivelActual.innerText = nivelSeleccionado;
+  puntos.innerText = 0;
+  tiempo.innerText = '00';
+
+  previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
+
   spawn(); // Nace la primera pieza
 };
+
+function actualizarReloj(){
+  if(gameOverState) return;
+  tiempoActual++;
+  console.log(minutos);
+  if(tiempoActual==60){
+    tiempoActual=0;
+    minutos++;
+  }
+
+  if(minutos<10)
+      txtMinutos.innerText = '0'+ minutos;
+  else txtMinutos.innerText = minutos;
+
+  if(tiempoActual<10){
+    tiempo.innerText = '0'+tiempoActual;
+  }else
+    tiempo.innerText = tiempoActual;
+}
 
 // Tick de caída automática (llamada por el timer). Intenta bajar la pieza.
 function fall() {
@@ -286,23 +340,8 @@ function fall() {
 
 // Crea una nueva pieza aleatoria en la parte superior del tablero.
 function spawn() {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  let shape = Math.floor(Math.random() * N_BLOCK_TYPES); // Saca un número del 0 al 6.
-  let color = PIECE_COLOR;
-=======
   let shape = previewShape;
   let color = PIECE_COLORS[shape];
->>>>>>> Stashed changes
-=======
-  let shape = previewShape;
-  let color = PIECE_COLORS[shape];
->>>>>>> Stashed changes
-=======
-  let shape = previewShape;
-  let color = PIECE_COLORS[shape];
->>>>>>> Stashed changes
 
   tetromino = new Tetromino(shape, color, theTetris);
 
@@ -312,10 +351,11 @@ function spawn() {
   let conflict = tetromino.create(start_x, start_y);
   // Si al nacer ya está en conflicto (chocando con otra), Game Over.
   if (conflict) setGameOver(true);
+
+  previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
+  dibujarPreview();
 };
 
-<<<<<<< Updated upstream
-=======
 function dibujarPreview(){
   for(let i = 0; i < previewGraphics.length; i++){
     previewGraphics[i].destroy();
@@ -325,9 +365,10 @@ function dibujarPreview(){
   let baseX = gameWidth+55;
   let baseY = 100;
   if(previewShape==2)
-    baseY = 50
+    baseY = 50;
 
   let dummy = new Tetromino(previewShape, PIECE_COLORS[previewShape], null);
+  
   let offsets = dummy.offsets[previewShape];
 
   for(let i = 0; i< BLOCKS_PER_TETROMINO; i++){
@@ -343,15 +384,14 @@ function dibujarPreview(){
   }
 }
 
->>>>>>> Stashed changes
 // Activa/Desactiva el estado de fin de partida y crea la pantalla opaca con texto.
 function setGameOver(on){
   gameOverState = on;
   if (gameOverState) {
     timer.pause(); // Para que dejen de caer piezas.
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
+    
     // Añade el texto centrado indicando que pulsando R reinicias.
-<<<<<<< Updated upstream
 
     game.state.start('hof');
                             // centerText = game.add.text(game.world.centerX, game.world.centerY,
@@ -362,51 +402,27 @@ function setGameOver(on){
                             //   }
                             // );
                             // centerText.anchor.set(0.5); // Centra el eje del texto
-=======
     centerText = game.add.text(game.world.centerX, game.world.centerY,
       'GAME OVER\n\nPress R to restart,\nQ to go to\nHall of Fame', {
         font: 'ari-w9500-bold',
         fontSize: '32px',
+
+    //apagamos el HUD del juego
+    hudJuego.style.display = 'none';
+
+    // Añade el texto centrado indicando que pulsando R reinicias.
+    centerText = game.add.text(game.world.centerX, game.world.centerY,
+      'GAME OVER\n\nPress R to restart,\nQ to go to\nHall of Fame', {
+        font: 'bold 32px system-ui, -apple-system, Segoe UI, Roboto, Arial',
         fill: '#ffffff',
         align: 'center'
       }
     );
     centerText.anchor.set(0.5); // Centra el eje del texto
->>>>>>> Stashed changes
   }
 };
 
 function makeShade(alpha) {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
-
-  // crear SOLO una vez
-  if (!shade) {
-    shade = game.add.graphics(0, 0);
-    shade.beginFill(0xC4B7E7, 1);
-    shade.drawRect(0, 0, gameWidth+130, gameHeight);
-    shade.endFill();
-  }
-
-  // solo cambias visibilidad/opacidad
-  shade.alpha = alpha;
-}
->>>>>>> Stashed changes
-
-  // crear SOLO una vez
-  if (!shade) {
-    shade = game.add.graphics(0, 0);
-    shade.beginFill(0xC4B7E7, 1);
-    shade.drawRect(0, 0, gameWidth+130, gameHeight);
-    shade.endFill();
-  }
-
-  // solo cambias visibilidad/opacidad
-  shade.alpha = alpha;
-}
->>>>>>> Stashed changes
 
   // crear SOLO una vez
   if (!shade) {
@@ -420,10 +436,32 @@ function makeShade(alpha) {
   shade.alpha = alpha;
 }
 
-// Bucle ejecutado a 60 FPS por Phaser. Controla el teclado.
+  // crear SOLO una vez
+  if (!shade) {
+    shade = game.add.graphics(0, 0);
+    shade.beginFill(0xC4B7E7, 1);
+    shade.drawRect(0, 0, gameWidth+130, gameHeight);
+    shade.endFill();
+  }
+
+  // solo cambias visibilidad/opacidad
+  shade.alpha = alpha;
+}
+
+  // crear SOLO una vez
+  if (!shade) {
+    shade = game.add.graphics(0, 0);
+    shade.beginFill(0xC4B7E7, 1);
+    shade.drawRect(0, 0, gameWidth+130, gameHeight);
+    shade.endFill();
+  }
+
+  // solo cambias visibilidad/opacidad
+  shade.alpha = alpha;
+}
+
+
 function updateGame() {
-<<<<<<< Updated upstream
-=======
 
   //Control de la pausa
   if(keyPausa.justDown){
@@ -435,6 +473,9 @@ function updateGame() {
     } else{
       pausado=true;
       makeShade(0.65);
+      timer.resume();
+    } else{
+      pausado=true;
       timer.pause();
     }
   }
@@ -455,7 +496,7 @@ function updateGame() {
     }
 
   // Bucle ejecutado a 60 FPS por Phaser. Controla el teclado.
->>>>>>> Stashed changes
+
   currentMovementTimer += this.time.elapsed; // Suma el tiempo entre frames
   // Si no ha pasado el lag mínimo (85ms), aborta lectura de teclas para no ir demasiado rápido
   if (currentMovementTimer <= MOVEMENT_LAG) return;
@@ -464,6 +505,10 @@ function updateGame() {
     // Si estás muerto, solo escucha la tecla R para reiniciar.
     if (keyRestart.isDown)
       resetGame();
+
+    if (keyHof.isDown)
+      game.state.start('hof');
+
     currentMovementTimer = 0;
     return;
   };
@@ -481,6 +526,9 @@ function updateGame() {
     if (tetromino.canMove(tetromino.rotate.bind(tetromino), 'clockwise'))
       tetromino.move(tetromino.rotate.bind(tetromino), null, 'clockwise');
   };
+
+  //Actualiza el HUD
+  puntos.innerText = puntosActual;
 
   // Reinicia el timer para que haya que esperar otros 85ms antes de registrar otro movimiento.
   currentMovementTimer = 0;
@@ -509,14 +557,28 @@ function lockTetromino() {
 // Revisa las filas tocadas por la pieza recién fijada y aplica limpieza/colapso.
 function checkLines(candidateLines) {
   let collapsed = []; // Líneas a destruir
+  let multiplicador = 0; //multiplicador lineas colapsadas en la misma jugada
+  let puntosJugada = 0;  //puntos de esta jugada
   for (let i = 0; i < candidateLines.length; i++) {
     let y = candidateLines[i];
     // Matemáticas astutas: si la suma de la fila da = (10 celdas * OCCUPIED (2)) = 20, está llena.
     if (lineSum(y) == (NUMBLOCKS_X * OCCUPIED)) {
+      puntosJugada+=lineSum(y); //Sumar puntos por linea
       collapsed.push(y);
       cleanLine(y); // Borra visualmente esa fila
     }
   }
+
+  multiplicador = collapsed.length;
+  if(multiplicador==1)
+    puntosActual += puntosJugada;
+  else if(multiplicador==2)
+    puntosActual += puntosJugada*1.5;
+  else if(multiplicador==3)
+    puntosActual += puntosJugada*2;
+  else if(multiplicador==4)
+    puntosActual += puntosJugada*4;
+
   // Si se ha eliminado al menos 1 línea, manda a colapsar (bajar) el resto.
   if (collapsed.length)
     collapse(collapsed);
