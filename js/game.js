@@ -390,22 +390,6 @@ function setGameOver(on){
   if (gameOverState) {
     timer.pause(); // Para que dejen de caer piezas.
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
-    
-    // Añade el texto centrado indicando que pulsando R reinicias.
-
-    game.state.start('hof');
-                            // centerText = game.add.text(game.world.centerX, game.world.centerY,
-                            //   'GAME OVER\n\nPress R to restart', {
-                            //     font: 'bold 32px system-ui, -apple-system, Segoe UI, Roboto, Arial',
-                            //     fill: '#ffffff',
-                            //     align: 'center'
-                            //   }
-                            // );
-                            // centerText.anchor.set(0.5); // Centra el eje del texto
-    centerText = game.add.text(game.world.centerX, game.world.centerY,
-      'GAME OVER\n\nPress R to restart,\nQ to go to\nHall of Fame', {
-        font: 'ari-w9500-bold',
-        fontSize: '32px',
 
     //apagamos el HUD del juego
     hudJuego.style.display = 'none';
@@ -436,30 +420,6 @@ function makeShade(alpha) {
   shade.alpha = alpha;
 }
 
-  // crear SOLO una vez
-  if (!shade) {
-    shade = game.add.graphics(0, 0);
-    shade.beginFill(0xC4B7E7, 1);
-    shade.drawRect(0, 0, gameWidth+130, gameHeight);
-    shade.endFill();
-  }
-
-  // solo cambias visibilidad/opacidad
-  shade.alpha = alpha;
-}
-
-  // crear SOLO una vez
-  if (!shade) {
-    shade = game.add.graphics(0, 0);
-    shade.beginFill(0xC4B7E7, 1);
-    shade.drawRect(0, 0, gameWidth+130, gameHeight);
-    shade.endFill();
-  }
-
-  // solo cambias visibilidad/opacidad
-  shade.alpha = alpha;
-}
-
 
 function updateGame() {
 
@@ -473,9 +433,6 @@ function updateGame() {
     } else{
       pausado=true;
       makeShade(0.65);
-      timer.resume();
-    } else{
-      pausado=true;
       timer.pause();
     }
   }
