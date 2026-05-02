@@ -9,7 +9,7 @@ let nivelesState={
 };
 
 function tamanyoCanvasNiveles(){
-    this.game.scale.setGameSize(640,480);
+    this.game.scale.setGameSize(gameWidth+130,gameHeight);
 };
 
 function preloadNiveles(){
