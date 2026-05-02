@@ -1,16 +1,23 @@
+@font-face {
+  font-family: 'ari-w9500-bold';
+  src: url('../assets/fonts/ari_w9500/ari-w9500-bold.ttf');
+}
+
 html,
 body {
   margin: 0; /* Elimina márgenes por defecto del navegador */
   padding: 0;
-  background: #065d85; /* Un color de fondo azul oscuro para la web */
-  color: #ddd;
+  background-image: url('../assets/imgs/flores_fondo.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 #wrap {
   display: flex; /* Usamos flexbox para centrar el contenido fácilmente */
   justify-content: center; /* Centra el juego horizontalmente */
-  align-items: flex-start; /* Alinea el juego a la parte superior */
+  align-items: center; /* Alinea el juego a la parte superior */
   min-height: 100vh; /* Ocupa al menos el 100% del alto de la ventana */
   padding: 24px;
   box-sizing: border-box; /* El padding no aumenta el tamaño total del div */
@@ -19,4 +26,93 @@ body {
 #game {
   /* Añade una sombra bonita alrededor del canvas creado por Phaser para que destaque */
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+<<<<<<< Updated upstream
+=======
+}
+
+#HUD{
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 48%;
+  transform: translate(-50%,-50%);
+}
+
+#txtPuntos{
+  position: absolute;
+  transform: translate(-50%);
+  left: -300px;
+
+  font-family: ari-w9500-bold;
+}
+
+#intPuntos{
+  position: absolute;
+  transform: translate(-50%);
+  left: -200px;
+
+  font-family: ari-w9500-bold;
+}
+
+#txtLineas{
+  position: absolute;
+  top: -30px;
+  left: -309px;
+
+  font-family: ari-w9500-bold;
+}
+
+#intLineas{
+  position: absolute;
+  transform: translate(-50%);
+  top: -30px;
+  left: -200px;
+
+  font-family: ari-w9500-bold;
+}
+
+#txtNivel{
+  position: absolute;
+  transform: translate(-50%);
+  top: -400px;
+  left: -250px;
+
+  font-family: ari-w9500-bold;
+}
+
+#intNivel{
+  position: absolute;
+  transform: translate(-50%);
+  top: -400px;
+  left: -200px;
+
+  font-family: ari-w9500-bold;
+}
+
+#txtTimer{
+  position: absolute;
+  transform: translate(-50%);
+  top: -370px;
+  left: -254px;
+
+  font-family: ari-w9500-bold;
+}
+
+#minutos{
+  position: absolute;
+  transform: translate(-50%);
+  top: -370px;
+  left: -270px;
+
+  font-family: ari-w9500-bold;
+}
+
+#segundos{
+  position: absolute;
+  transform: translate(-50%);
+  top: -370px;
+  left: -238px;
+
+  font-family: ari-w9500-bold;
+>>>>>>> Stashed changes
 }

@@ -1,12 +1,13 @@
 let estiloTitulo = {
-    font: '48px "Silkscreen"',
-    fill: '#ffffff',
+     fontFamily: 'ari-w9500-bold',
+    fontSize: '32px',
+    fill: '#a9bfe9ff',
     align: 'center',
 
-    /*shadowOffsetX: 2,
+    shadowOffsetX: 2,
     shadowOffsetY: 2,
     shadowBlur: 3,
-    shadowColor: '#13923dff',
+    shadowColor: '#7056acff',
     shadowStroke: true,
-    shadowFill: true*/
+    shadowFill: true
 };

@@ -10,8 +10,15 @@ const INITIAL_FALL_DELAY = 600;     // Tiempo en ms que tarda la pieza en caer u
 const BLOCKS_PER_TETROMINO = 4;     // Cada pieza (tetrimino) está formada exactamente por 4 bloques.
 const N_BLOCK_TYPES = 7;            // Existen 7 formas clásicas (I, J, L, O, S, T, Z).
 
-// Color de las piezas: blanco
-const PIECE_COLOR = 0xFFFFFF;       // Todas las piezas usarán código hexadecimal blanco.
+// Color de las piezas:
+const PIECE_COLORS = [
+ 0xfef4d7,
+ 0xfae1ca,
+ 0xf6cdbc,
+ 0xf2baaf,
+ 0xeda7a2,
+ 0xe99394,
+ 0xe58087];
 
 // Scene grid values
 // Se usan para definir el estado lógico de cada celda de la cuadrícula.
@@ -279,8 +286,13 @@ function fall() {
 
 // Crea una nueva pieza aleatoria en la parte superior del tablero.
 function spawn() {
+<<<<<<< Updated upstream
   let shape = Math.floor(Math.random() * N_BLOCK_TYPES); // Saca un número del 0 al 6.
   let color = PIECE_COLOR;
+=======
+  let shape = previewShape;
+  let color = PIECE_COLORS[shape];
+>>>>>>> Stashed changes
 
   tetromino = new Tetromino(shape, color, theTetris);
 
@@ -292,6 +304,36 @@ function spawn() {
   if (conflict) setGameOver(true);
 };
 
+<<<<<<< Updated upstream
+=======
+function dibujarPreview(){
+  for(let i = 0; i < previewGraphics.length; i++){
+    previewGraphics[i].destroy();
+  }
+  previewGraphics = [];
+
+  let baseX = gameWidth+55;
+  let baseY = 100;
+  if(previewShape==2)
+    baseY = 50
+
+  let dummy = new Tetromino(previewShape, PIECE_COLORS[previewShape], null);
+  let offsets = dummy.offsets[previewShape];
+
+  for(let i = 0; i< BLOCKS_PER_TETROMINO; i++){
+    let xPos = baseX + (offsets[i][0]*BLOCKSIZE);
+    let yPos = baseY + (offsets[i][1]*BLOCKSIZE);
+
+    let g = dummy.renderBlock();
+
+    g.x = xPos;
+    g.y = yPos;
+
+    previewGraphics.push(g);
+  }
+}
+
+>>>>>>> Stashed changes
 // Activa/Desactiva el estado de fin de partida y crea la pantalla opaca con texto.
 function setGameOver(on){
   gameOverState = on;
@@ -299,6 +341,7 @@ function setGameOver(on){
     timer.pause(); // Para que dejen de caer piezas.
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
     // Añade el texto centrado indicando que pulsando R reinicias.
+<<<<<<< Updated upstream
 
     game.state.start('hof');
                             // centerText = game.add.text(game.world.centerX, game.world.centerY,
@@ -309,19 +352,70 @@ function setGameOver(on){
                             //   }
                             // );
                             // centerText.anchor.set(0.5); // Centra el eje del texto
+=======
+    centerText = game.add.text(game.world.centerX, game.world.centerY,
+      'GAME OVER\n\nPress R to restart,\nQ to go to\nHall of Fame', {
+        font: 'ari-w9500-bold',
+        fontSize: '32px',
+        fill: '#ffffff',
+        align: 'center'
+      }
+    );
+    centerText.anchor.set(0.5); // Centra el eje del texto
+>>>>>>> Stashed changes
   }
 };
 
-// Función auxiliar para dibujar un rectángulo negro opaco que cubra todo.
-function makeShade(alpha){
-  shade = game.add.graphics(0,0);
-  shade.beginFill(0x000000, alpha);
-  shade.drawRect(0, 0, gameWidth, gameHeight);
-  shade.endFill();
-};
+function makeShade(alpha) {
+
+  // crear SOLO una vez
+  if (!shade) {
+    shade = game.add.graphics(0, 0);
+    shade.beginFill(0xC4B7E7, 1);
+    shade.drawRect(0, 0, gameWidth+130, gameHeight);
+    shade.endFill();
+  }
+
+  // solo cambias visibilidad/opacidad
+  shade.alpha = alpha;
+}
 
 // Bucle ejecutado a 60 FPS por Phaser. Controla el teclado.
 function updateGame() {
+<<<<<<< Updated upstream
+=======
+
+  //Control de la pausa
+  if(keyPausa.justDown){
+    if(pausado){
+      pausado=false;
+      centerText.visible = false;
+      makeShade(0);
+      timer.resume();
+    } else{
+      pausado=true;
+      makeShade(0.65);
+      timer.pause();
+    }
+  }
+
+  if(!gameOverState)
+    if(pausado){
+      if (!centerText) {
+        centerText = game.add.text(game.world.centerX, game.world.centerY, 'PAUSE', {
+          font: 'ari-w9500-bold',
+          fontSize: '32px',
+          fill: '#ffffff',
+          align: 'center'
+        });
+        centerText.anchor.set(0.5);
+      }
+      centerText.visible = true;
+      return;
+    }
+
+  // Bucle ejecutado a 60 FPS por Phaser. Controla el teclado.
+>>>>>>> Stashed changes
   currentMovementTimer += this.time.elapsed; // Suma el tiempo entre frames
   // Si no ha pasado el lag mínimo (85ms), aborta lectura de teclas para no ir demasiado rápido
   if (currentMovementTimer <= MOVEMENT_LAG) return;
