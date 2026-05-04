@@ -12,7 +12,8 @@ function startGame(){
     game.state.add('init', initState);
     game.state.add('niveles', nivelesState);
     game.state.add('play', gameState);
-    game.state.add('hof',hofState);
+    game.state.add('hof',hofState);    
+    game.state.add('creditos', creditosState);
 
     // Arrancamos el estado 'init', lo que disparará la función resetGame() (definida en gameState.create).
     game.state.start('init');
