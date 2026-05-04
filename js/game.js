@@ -240,6 +240,12 @@ let tiempoActual = 0;
 let minutos = 0;
 let loopReloj;
 
+let cp1,cp2,cp3,cp4;
+let cp1Bool = false;
+let cp2Bool = false;
+let cp3Bool = false;
+let cp4Bool = false;
+
 let previewShape;
 let previewGraphics = [];
 
@@ -302,6 +308,7 @@ function resetGame() {
   tiempo.innerText = '00';
 
   calcularObjetivo();
+  calcularCheckPoints();
 
   previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
   spawn(); // Nace la primera pieza
@@ -466,7 +473,7 @@ function updateGame() {
     }
   }
 
-  if(!gameOverState)
+  if(!gameOverState){
     if(pausado){
       if (!centerText) {
         centerText = game.add.text(game.world.centerX, game.world.centerY, 'PAUSE', {
@@ -480,7 +487,7 @@ function updateGame() {
       centerText.visible = true;
       return;
     }
-
+  };
   // Bucle ejecutado a 60 FPS por Phaser. Controla el teclado.
 
   currentMovementTimer += this.time.elapsed; // Suma el tiempo entre frames
@@ -568,6 +575,22 @@ function checkLines(candidateLines) {
   // Si se ha eliminado al menos 1 línea, manda a colapsar (bajar) el resto.
   if (collapsed.length)
     collapse(collapsed);
+
+  //Checkpoints para aumentar la velocidad a la que bajan las piezas;   SOLUCIONAR va rarete, a golpes y cada vez más rápido
+  if(puntosActual>=cp4 && !cp4Bool){
+    cp4Bool = true;
+    loop = timer.loop(INITIAL_FALL_DELAY-300, fall, this);
+  } else if(puntosActual>=cp3){
+    cp3Bool = true;
+    loop = timer.loop(INITIAL_FALL_DELAY-200, fall, this);
+  } else if(puntosActual>=cp2){
+    cp2Bool = true;
+    loop = timer.loop(INITIAL_FALL_DELAY-150, fall, this);
+  } else if(puntosActual>=cp1){
+    cp1Bool = true;
+    loop = timer.loop(INITIAL_FALL_DELAY-100, fall, this);
+  }
+
 };
 
 // Suma el estado de una fila para detectar si está completamente ocupada.
@@ -618,6 +641,13 @@ function collapse(linesToCollapse) {
 };
 
 function calcularObjetivo(){
-  objetivoPuntos = 20; //67*20*nivelSeleccionado;
+  objetivoPuntos = 67*5*nivelSeleccionado;
   console.log(objetivoPuntos);
 };
+
+function calcularCheckPoints(){   //calcula en que puntuaciones debe aumentar las velocidades de las piezas
+  cp1 = objetivoPuntos*0.1;
+  cp2 = objetivoPuntos*0.3;
+  cp3 = objetivoPuntos*0.5;
+  cp4 = objetivoPuntos*0.7;
+}
