@@ -1,15 +1,11 @@
 //Objetos
-let btnN1, btnN2, btnN3, btnN4, btnN5, btnN6;
-let txtHeader;
+let MNbtnN1, MNbtnN2, MNbtnN3, MNbtnN4, MNbtnN5, MNbtnN6;
+let MNtxtHeader;
+let MNbtnVolver;
 
 let nivelesState={
     preload: preloadNiveles,
-    init: tamanyoCanvasNiveles,
     create: createNiveles,
-};
-
-function tamanyoCanvasNiveles(){
-    this.game.scale.setGameSize(gameWidth+130,gameHeight);
 };
 
 function preloadNiveles(){
@@ -19,41 +15,52 @@ function preloadNiveles(){
     game.load.image('n4','assets/niveles/patricio.jpg');
     game.load.image('n5','assets/niveles/iGuess.jpg');
     game.load.image('n6','assets/niveles/bart.jfif');
+    game.load.image('ttt','assets/lilTung.png');
 }
 
 function createNiveles(){
-    let text_posX=game.world.width * 0.5;
-    let text_posY=game.world.height * 0.15;
+    let MNtext_posX=game.world.width * 0.5;
+    let MNtext_posY=game.world.height * 0.15;
 
+    let MNvolver_posX=game.world.width * 0.8;   //BOTON volver
+    let MNvolver_posY=game.world.height * 0.8;
     
-    txtHeader = game.add.text(text_posX,text_posY,'Niveles', estiloTitulo);
-    txtHeader.anchor.setTo(0.5, 0.5);
+    MNtxtHeader = game.add.text(MNtext_posX,MNtext_posY,'Niveles', estiloTitulo);
+    MNtxtHeader.anchor.setTo(0.5, 0.5);
 
-    btnN1=game.add.button(game.width*0.25,game.height*0.4,'n1',function(){startPlay(1)});
-    btnN1.anchor.setTo(0.5,0.5);
-    btnN1.scale.set(0.25)
+    MNbtnN1=game.add.button(game.width*0.25,game.height*0.4,'n1',function(){startPlay(1)});
+    MNbtnN1.anchor.setTo(0.5,0.5);
+    MNbtnN1.scale.set(0.15)
 
-    btnN2=game.add.button(game.width*0.5,game.height*0.4,'n2', function(){startPlay(2)});
-    btnN2.anchor.setTo(0.5,0.5);
-    btnN2.scale.set(0.1)
+    MNbtnN2=game.add.button(game.width*0.5,game.height*0.4,'n2', function(){startPlay(2)});
+    MNbtnN2.anchor.setTo(0.5,0.5);
+    MNbtnN2.scale.set(0.05)
 
-    btnN3=game.add.button(game.width*0.75,game.height*0.4,'n3', function(){startPlay(3)});
-    btnN3.anchor.setTo(0.5,0.5);
-    btnN3.scale.set(0.1)
+    MNbtnN3=game.add.button(game.width*0.75,game.height*0.4,'n3', function(){startPlay(3)});
+    MNbtnN3.anchor.setTo(0.5,0.5);
+    MNbtnN3.scale.set(0.05)
 
-    btnN4=game.add.button(game.width*0.25,game.height*0.75,'n4', function(){startPlay(4)});
-    btnN4.anchor.setTo(0.5,0.5);
-    btnN4.scale.set(0.55)
+    MNbtnN4=game.add.button(game.width*0.25,game.height*0.65,'n4', function(){startPlay(4)});
+    MNbtnN4.anchor.setTo(0.5,0.5);
+    MNbtnN4.scale.set(0.30)
 
-    btnN5=game.add.button(game.width*0.5,game.height*0.75,'n5', function(){startPlay(5)});
-    btnN5.anchor.setTo(0.5,0.5);
-    btnN5.scale.set(0.25)
+    MNbtnN5=game.add.button(game.width*0.5,game.height*0.65,'n5', function(){startPlay(5)});
+    MNbtnN5.anchor.setTo(0.5,0.5);
+    MNbtnN5.scale.set(0.15)
 
-    btnN6=game.add.button(game.width*0.75,game.height*0.75,'n6', function(){startPlay(6)});
-    btnN6.anchor.setTo(0.5,0.5);
-    btnN6.scale.set(0.2)
+    MNbtnN6=game.add.button(game.width*0.75,game.height*0.65,'n6', function(){startPlay(6)});
+    MNbtnN6.anchor.setTo(0.5,0.5);
+    MNbtnN6.scale.set(0.1)
+
+    MNbtnVolver=game.add.button(MNvolver_posX,MNvolver_posY,'ttt', mainMenu);
+    MNbtnVolver.anchor.setTo(0.5,0.5);
+    MNbtnVolver.scale.setTo(0.15);
 }
 
 function startPlay(nivel){
     game.state.start('play',true, false, nivel);
+}
+
+function mainMenu(){
+    game.state.start('init');
 }
