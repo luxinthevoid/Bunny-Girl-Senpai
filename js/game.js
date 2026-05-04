@@ -221,6 +221,7 @@ let move_offsets = {
 let tetromino, theTetris; // Pieza actual y tablero
 let cursors, keyRotate, keyRestart, keyHof, keyPausa; // Entradas de teclado
 let gameOverState = false; // Bandera booleana de estado de fin de partida
+let gameWinState = false;
 
 let timer, loop; // Temporizador nativo de Phaser y el bucle para la gravedad.
 let currentMovementTimer = 0; // Acumulador para restringir la velocidad de input lateral
@@ -233,7 +234,7 @@ let tiempo = document.getElementById('segundos');
 let txtMinutos = document.getElementById('minutos');
 
 let pausado = false; //bool para la pausado
-let nivelSeleccionado;
+let nivelSeleccionado, objetivoPuntos;
 let puntosActual = 0;
 let tiempoActual = 0;
 let minutos = 0;
@@ -252,6 +253,7 @@ function resetGame() {
   game.world.removeAll(); // Borra todos los gráficos en pantalla
 
   gameOverState = false;
+  gameWinState = false;
   currentMovementTimer = 0;
 
   // Creamos el tablero lógico
@@ -299,8 +301,9 @@ function resetGame() {
   puntos.innerText = 0;
   tiempo.innerText = '00';
 
-  previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
+  calcularObjetivo();
 
+  previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
   spawn(); // Nace la primera pieza
 };
 
@@ -406,6 +409,28 @@ function setGameOver(on){
   }
 };
 
+// Copia de setGameOver para cuando ganas
+function setGameWin(on){
+  gameWinState = on;
+  if (gameWinState) {
+    timer.pause(); // Para que dejen de caer piezas.
+    makeShade(0.65); // Dibuja la sombra negra semitransparente.
+
+    //apagamos el HUD del juego
+    hudJuego.style.display = 'none';
+
+    // Añade el texto centrado indicando que pulsando R reinicias.
+    centerText = game.add.text(game.world.centerX, game.world.centerY,
+      'WINNER\n\nPoints: '+puntosActual+',\nQ to go to\nHall of Fame', {
+        font: 'bold 32px system-ui, -apple-system, Segoe UI, Roboto, Arial',
+        fill: '#ffffff',
+        align: 'center'
+      }
+    );
+    centerText.anchor.set(0.5); // Centra el eje del texto
+  }
+};
+
 function makeShade(alpha) {
 
   // crear SOLO una vez
@@ -422,6 +447,10 @@ function makeShade(alpha) {
 
 
 function updateGame() {
+
+  if(puntosActual == objetivoPuntos){
+    setGameWin(true);
+  }
 
   //Control de la pausa
   if(keyPausa.justDown){
@@ -586,4 +615,9 @@ function collapse(linesToCollapse) {
       theTetris.sceneBlocks[x2][0] = null;
     }
   }
+};
+
+function calcularObjetivo(){
+  objetivoPuntos = 20; //67*20*nivelSeleccionado;
+  console.log(objetivoPuntos);
 };
