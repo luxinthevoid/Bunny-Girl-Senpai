@@ -26,6 +26,11 @@ const EMPTY = 0;                    // La celda está vacía.
 const FALLING = 1;                  // La celda está ocupada temporalmente por la pieza que el jugador controla.
 const OCCUPIED = 2;                 // La celda tiene un bloque fijo (chocó y se quedó ahí).
 
+//Sonidos
+const sonido_tetromino_spawn = new Audio('assets/sonidos/beep_sound_spawn.wav');
+const sonido_tetromino_chocar = new Audio('assets/sonidos/snap_sound.wav');
+const sonido_hacer_fila = new Audio('assets/sonidos/line_sound.wav');
+
 /**
  * Clase que gestiona el Tablero (La cuadrícula lógica y visual)
  */
@@ -72,7 +77,7 @@ class Tetromino {
     this.center = [0, 0];       // Coordenada x,y (lógica) central sobre la que rota la pieza.
     this.blocks = [];           // Array con los 4 objetos visuales (Graphics de Phaser).
     this.cells = [];            // Array con las 4 coordenadas lógicas [x,y] de los bloques.
-    
+
     // Matriz clave: Define la "forma" de las piezas mediante coordenadas relativas al centro [0,0].
     this.offsets = {
       0 : [[0,-1],[0,0],[0,1],[1,1]],     // L
@@ -366,6 +371,8 @@ function spawn() {
 
   previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
   dibujarPreview();
+
+  sonido_tetromino_spawn.play();
 };
 
 function dibujarPreview(){
@@ -380,7 +387,7 @@ function dibujarPreview(){
     baseY = 50;
 
   let dummy = new Tetromino(previewShape, PIECE_COLORS[previewShape], null);
-  
+
   let offsets = dummy.offsets[previewShape];
 
   for(let i = 0; i< BLOCKS_PER_TETROMINO; i++){
@@ -538,6 +545,7 @@ function updateGame() {
 // Fija la pieza actual convirtiéndola en estado 'OCCUPIED' en la matriz.
 function lockTetromino() {
   let touchedLines = []; // Array temporal para guardar qué filas Y ha ocupado la pieza
+  sonido_tetromino_chocar.play();
   for (let i = 0; i < tetromino.cells.length; i++) {
     let x = tetromino.cells[i][0];
     let y = tetromino.cells[i][1];
@@ -564,6 +572,7 @@ function checkLines(candidateLines) {
     let y = candidateLines[i];
     // Matemáticas astutas: si la suma de la fila da = (10 celdas * OCCUPIED (2)) = 20, está llena.
     if (lineSum(y) == (NUMBLOCKS_X * OCCUPIED)) {
+      sonido_hacer_fila.play();
       puntosJugada+=lineSum(y); //Sumar puntos por linea
       collapsed.push(y);
       cleanLine(y); // Borra visualmente esa fila
