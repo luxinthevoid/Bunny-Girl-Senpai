@@ -16,7 +16,7 @@ function createHof(){
 
     let HOFtext_posX=game.world.width * 0.5;
     let HOFtext_posY=game.world.height * 0.15;
-    
+
     HOFtxtHeader = game.add.text(HOFtext_posX,HOFtext_posY,'Hall of\nFame', estiloTitulo);
     HOFtxtHeader.anchor.setTo(0.5, 0.5);
 
