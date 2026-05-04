@@ -31,7 +31,7 @@ body {
 #HUD{
   display: none;
   position: absolute;
-  top: 50%;
+  top: 65%;
   left: 48%;
   transform: translate(-50%,-50%);
 }
@@ -47,6 +47,24 @@ body {
 #intPuntos{
   position: absolute;
   transform: translate(-50%);
+  left: -200px;
+
+  font-family: ari-w9500-bold;
+}
+
+#txtObjetivo{
+  position: absolute;
+  transform: translate(-50%);
+  top: 30px;
+  left: -288px;
+
+  font-family: ari-w9500-bold;
+}
+
+#intObjetivo{
+  position: absolute;
+  transform: translate(-50%);
+  top: 30px;
   left: -200px;
 
   font-family: ari-w9500-bold;

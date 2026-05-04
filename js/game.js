@@ -232,6 +232,7 @@ let puntos = document.getElementById('intPuntos');
 let nivelActual = document.getElementById('intNivel');
 let tiempo = document.getElementById('segundos');
 let txtMinutos = document.getElementById('minutos');
+let hudObjetivo = document.getElementById('intObjetivo');
 
 let pausado = false; //bool para la pausado
 let nivelSeleccionado, objetivoPuntos;
@@ -308,6 +309,7 @@ function resetGame() {
   tiempo.innerText = '00';
 
   calcularObjetivo();
+  hudObjetivo.innerText = objetivoPuntos;
   calcularCheckPoints();
 
   previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
@@ -455,6 +457,8 @@ function makeShade(alpha) {
 
 function updateGame() {
 
+  console.log(loop.delay);
+
   if(puntosActual == objetivoPuntos){
     setGameWin(true);
   }
@@ -475,8 +479,12 @@ function updateGame() {
 
   if(!gameOverState){
     if(pausado){
+
+      if (keyHof.isDown)
+        game.state.start('init');
+
       if (!centerText) {
-        centerText = game.add.text(game.world.centerX, game.world.centerY, 'PAUSE', {
+        centerText = game.add.text(game.world.centerX, game.world.centerY, 'PAUSE\n\nPress Q\nto exit', {
           font: 'ari-w9500-bold',
           fontSize: '32px',
           fill: '#ffffff',
@@ -579,16 +587,16 @@ function checkLines(candidateLines) {
   //Checkpoints para aumentar la velocidad a la que bajan las piezas;   SOLUCIONAR va rarete, a golpes y cada vez más rápido
   if(puntosActual>=cp4 && !cp4Bool){
     cp4Bool = true;
-    loop = timer.loop(INITIAL_FALL_DELAY-300, fall, this);
+    loop.delay = INITIAL_FALL_DELAY-300;
   } else if(puntosActual>=cp3){
     cp3Bool = true;
-    loop = timer.loop(INITIAL_FALL_DELAY-200, fall, this);
+    loop.delay = INITIAL_FALL_DELAY-200;
   } else if(puntosActual>=cp2){
     cp2Bool = true;
-    loop = timer.loop(INITIAL_FALL_DELAY-150, fall, this);
+    loop.delay = INITIAL_FALL_DELAY-150;
   } else if(puntosActual>=cp1){
     cp1Bool = true;
-    loop = timer.loop(INITIAL_FALL_DELAY-100, fall, this);
+    loop.delay = INITIAL_FALL_DELAY-100;
   }
 
 };
