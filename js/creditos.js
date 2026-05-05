@@ -14,7 +14,7 @@ function preloadCreditos(){
 }
 
 function createCreditos(){
-   
+
     //Posiciones objetos
     let CRstart_posX=game.world.width * 0.5;   //BOTON START
     let CRstart_posY=game.world.height * 0.60;
@@ -23,8 +23,8 @@ function createCreditos(){
     let CRtext_posY=game.world.height * 0.25;
 
     CRbgImg = game.add.image(0,0,'background');
-    CRbgImg.width = gameWidth+130;
-    CRbgImg.height = gameHeight;
+    CRbgImg.width = gameWidth+450;
+    CRbgImg.height = gameHeight+300;
 
     CRbtnVolver=game.add.button(CRstart_posX,CRstart_posY,'play', mainMenu);
     CRbtnVolver.anchor.setTo(0.5,0.5);
