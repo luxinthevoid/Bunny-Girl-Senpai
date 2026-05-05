@@ -2,7 +2,7 @@
 // Utiliza las variables globales 'gameWidth' y 'gameHeight' definidas en game.js.
 // Phaser.AUTO permite que el motor decida si usar WebGL o Canvas normal.
 // 'game' le indica que debe meter el juego dentro del <div id="game"> del HTML.
-let game = new Phaser.Game(gameWidth+130, gameHeight, Phaser.AUTO, 'game');
+let game = new Phaser.Game(canvasWidth, gameHeight, Phaser.AUTO, 'game');
 
 window.onload = startGame;
 
