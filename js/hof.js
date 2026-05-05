@@ -3,12 +3,17 @@ let HOFtxtHeader;
 
 let hofState={
     preload: preloadHof,
+    init: tamanyoCanvasJuego,
     create: createHof,
 };
 
 function preloadHof(){
     game.load.image('ttt','assets/lilTung.png');
 }
+
+function tamanyoCanvasJuego(){
+  this.game.scale.setGameSize(canvasWidth+150,gameHeight);
+};
 
 function createHof(){
     let HOFposX=game.world.width*0.5;

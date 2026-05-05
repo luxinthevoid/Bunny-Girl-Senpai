@@ -5,6 +5,7 @@ let MNbtnVolver;
 
 let nivelesState={
     preload: preloadNiveles,
+    init: tamanyoCanvasJuego,
     create: createNiveles,
 };
 
@@ -21,6 +22,10 @@ function preloadNiveles(){
     game.load.audio('sfx_hover', 'assets/sonidos/hover_sound.wav');
 
 }
+
+function tamanyoCanvasJuego(){
+  this.game.scale.setGameSize(canvasWidth+150,gameHeight);
+};
 
 function createNiveles(){
     let MNtext_posX=game.world.width * 0.5;
@@ -99,7 +104,7 @@ function createNiveles(){
     MNbtnN6.anchor.setTo(0.5,0.5);
     MNbtnN6.scale.set(0.1)
 
-    MNbtnVolver=game.add.button(MNvolver_posX,MNvolver_posY,'ttt', function(){ mainmenu;
+    MNbtnVolver=game.add.button(MNvolver_posX,MNvolver_posY,'ttt', function(){ mainMenu();
         sfxClick.play();}
     );
     MNbtnVolver.inputEnabled = true;

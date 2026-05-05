@@ -5,6 +5,7 @@ let CRbgImg;
 
 let creditosState={
     preload: preloadCreditos,
+    init: tamanyoCanvasJuego,
     create: createCreditos,
 };
 
@@ -12,6 +13,10 @@ function preloadCreditos(){
     game.load.image('background','assets/imgs/zen_background.jpg');
     game.load.image('play','assets/playButton.webp');
 }
+
+function tamanyoCanvasJuego(){
+  this.game.scale.setGameSize(canvasWidth+150,gameHeight);
+};
 
 function createCreditos(){
 

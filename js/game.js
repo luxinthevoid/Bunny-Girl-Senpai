@@ -242,11 +242,14 @@ let nivelActual = document.getElementById('intNivel');
 let tiempo = document.getElementById('segundos');
 let txtMinutos = document.getElementById('minutos');
 let hudObjetivo = document.getElementById('intObjetivo');
+let hudLineas = document.getElementById('intLineas')
+// let GAMECarga = document.getElementById('imgCarga');
 
 let pausado = false; //bool para la pausado
 let nivelSeleccionado, objetivoPuntos;
 let puntosActual = 0;
 let tiempoActual = 0;
+let lineasActual = 0;
 let minutos = 0;
 let loopReloj;
 
@@ -316,6 +319,8 @@ function resetGame() {
   nivelActual.innerText = nivelSeleccionado;
   puntos.innerText = 0;
   tiempo.innerText = '00';
+  lineasActual = 0;
+  // GAMECarga.style.display = 'none';
 
   calcularObjetivo();
   hudObjetivo.innerText = objetivoPuntos;
@@ -423,7 +428,7 @@ function setGameOver(on){
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
 
     //apagamos el HUD del juego
-    hudJuego.style.display = 'none';
+    // hudJuego.style.display = 'none';
 
     // Añade el texto centrado indicando que pulsando R reinicias.
     centerText = game.add.text(game.world.centerX, game.world.centerY,
@@ -445,7 +450,7 @@ function setGameWin(on){
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
 
     //apagamos el HUD del juego
-    hudJuego.style.display = 'none';
+    // hudJuego.style.display = 'none';
 
     // Añade el texto centrado indicando que pulsando R reinicias.
     centerText = game.add.text(game.world.centerX, game.world.centerY,
@@ -499,8 +504,10 @@ function updateGame() {
   if(!gameOverState){
     if(pausado){
 
-      if (keyHof.isDown)
+      if (keyHof.isDown){
+        hudJuego.style.display = 'none';
         game.state.start('init');
+      }
 
       if (!centerText) {
         centerText = game.add.text(game.world.centerX, game.world.centerY, 'PAUSE\n\nPress Q\nto exit', {
@@ -526,8 +533,10 @@ function updateGame() {
     if (keyRestart.isDown)
       resetGame();
 
-    if (keyHof.isDown)
-      game.state.start('hof');
+    if (keyHof.isDown){
+        hudJuego.style.display = 'none';
+        game.state.start('hof');
+      }
 
     currentMovementTimer = 0;
     return;
@@ -590,7 +599,8 @@ function checkLines(candidateLines) {
       cleanLine(y); // Borra visualmente esa fila
     }
   }
-
+  lineasActual+=collapsed.length;
+  hudLineas.innerText = lineasActual;
   multiplicador = collapsed.length;
   if(multiplicador==1)
     puntosActual += puntosJugada;
