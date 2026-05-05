@@ -5,130 +5,109 @@
 
 html,
 body {
-  margin: 0; /* Elimina márgenes por defecto del navegador */
+  margin: 0;
   padding: 0;
-  background-image: url('../assets/imgs/flores_fondo.jpg');
+  background-color: #1d1d1b;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
+/* Centra el conjunto en pantalla */
 #wrap {
-  display: flex; /* Usamos flexbox para centrar el contenido fácilmente */
-  justify-content: center; /* Centra el juego horizontalmente */
-  align-items: center; /* Alinea el juego a la parte superior */
-  min-height: 100vh; /* Ocupa al menos el 100% del alto de la ventana */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
   padding: 24px;
-  box-sizing: border-box; /* El padding no aumenta el tamaño total del div */
+  box-sizing: border-box;
 }
 
+/* Fila horizontal: canvas a la izquierda, sidebar a la derecha */
+#game-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+/* Canvas de Phaser */
 #game {
-  /* Añade una sombra bonita alrededor del canvas creado por Phaser para que destaque */
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+  flex-shrink: 0;
 }
 
-#HUD{
-  display: none;
-  position: absolute;
-  top: 65%;
-  left: 48%;
-  transform: translate(-50%,-50%);
+/* -----------------------------------------------
+   SIDEBAR / HUD
+   Ancho = SIDEBAR_WIDTH de game.js (150px)
+   Alto  = gameHeight del canvas (720px con BLOCKSIZE 36)
+   Ajusta estos valores si cambias BLOCKSIZE o SIDEBAR_WIDTH
+----------------------------------------------- */
+#HUD {
+  display: none;           /* Phaser lo activa con hudJuego.style.display = 'flex' */
+  width: 150px;            /* Igual que SIDEBAR_WIDTH en game.js */
+  height: 720px;           /* Igual que gameHeight: NUMBLOCKS_Y * BLOCKSIZE = 20 * 36 */
+  flex-direction: column;
+  align-items: center;
+  background-color: #0E0E0E;
+  box-sizing: border-box;
+  /* Espacio superior para que los datos queden debajo de la preview de Phaser.
+     La preview ocupa ~180px (4 bloques × 36px + margen). Ajusta si la ves encima. */
+  padding-top: 200px;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
-#txtPuntos{
-  position: absolute;
-  transform: translate(-50%);
-  left: -300px;
-
-  font-family: ari-w9500-bold;
+/* Columna de bloques de datos */
+#hud-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
 }
 
-#intPuntos{
-  position: absolute;
-  transform: translate(-50%);
-  left: -200px;
-
-  font-family: ari-w9500-bold;
+/* Cada bloque: etiqueta arriba, valor abajo */
+.hud-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 2px;
 }
 
-#txtObjetivo{
-  position: absolute;
-  transform: translate(-50%);
-  top: 30px;
-  left: -288px;
-
-  font-family: ari-w9500-bold;
+/* Etiqueta pequeña y tenue */
+.hud-label {
+  font-family: 'ari-w9500-bold', sans-serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #666;
 }
 
-#intObjetivo{
-  position: absolute;
-  transform: translate(-50%);
-  top: 30px;
-  left: -200px;
-
-  font-family: ari-w9500-bold;
+/* Valor grande y destacado */
+.hud-value {
+  font-family: 'ari-w9500-bold', sans-serif;
+  font-size: 22px;
+  color: #fef4d7;
+  line-height: 1;
 }
 
-#txtLineas{
-  position: absolute;
-  top: -30px;
-  left: -309px;
-
-  font-family: ari-w9500-bold;
+/* Fila del reloj: MM : SS en horizontal */
+.timer-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+  font-family: 'ari-w9500-bold', sans-serif;
+  font-size: 22px;
+  color: #fef4d7;
+  line-height: 1;
 }
 
-#intLineas{
-  position: absolute;
-  transform: translate(-50%);
-  top: -30px;
-  left: -200px;
-
-  font-family: ari-w9500-bold;
-}
-
-#txtNivel{
-  position: absolute;
-  transform: translate(-50%);
-  top: -400px;
-  left: -250px;
-
-  font-family: ari-w9500-bold;
-}
-
-#intNivel{
-  position: absolute;
-  transform: translate(-50%);
-  top: -400px;
-  left: -200px;
-
-  font-family: ari-w9500-bold;
-}
-
-#txtTimer{
-  position: absolute;
-  transform: translate(-50%);
-  top: -370px;
-  left: -254px;
-
-  font-family: ari-w9500-bold;
-}
-
-#minutos{
-  position: absolute;
-  transform: translate(-50%);
-  top: -370px;
-  left: -270px;
-
-  font-family: ari-w9500-bold;
-}
-
-#segundos{
-  position: absolute;
-  transform: translate(-50%);
-  top: -370px;
-  left: -238px;
-
-  font-family: ari-w9500-bold;
-
+.hud-colon {
+  font-size: 22px;
+  color: #fef4d7;
+  /* Pequeño ajuste óptico para que los dos puntos queden centrados */
+  margin-bottom: 2px;
 }

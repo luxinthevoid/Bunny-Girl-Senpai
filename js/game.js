@@ -1,6 +1,6 @@
 // --- Config ---
 // Estas constantes definen las reglas físicas y lógicas del juego.
-const BLOCKSIZE = 28;               // Tamaño en píxeles de cada cuadradito que forma una pieza.
+const BLOCKSIZE = 36;               // Tamaño en píxeles de cada cuadradito que forma una pieza.
 const NUMBLOCKS_X = 10;             // Número de columnas (ancho clásico de Tetris).
 const NUMBLOCKS_Y = 20;             // Número de filas (alto clásico de Tetris).
 const MOVEMENT_LAG = 85;            // Retraso en milisegundos para evitar que la pieza se mueva a la velocidad de la luz si dejas pulsada una tecla.
@@ -209,8 +209,12 @@ let gameState = {
 let bg; // Guardará el fondo gráfico (rejilla)
 
 // Se calculan las dimensiones exactas del lienzo multiplicando bloques por su tamaño.
-let gameWidth  = NUMBLOCKS_X * BLOCKSIZE;
-let gameHeight = NUMBLOCKS_Y * BLOCKSIZE;
+let gameWidth  = NUMBLOCKS_X * (BLOCKSIZE);
+let gameHeight = NUMBLOCKS_Y * (BLOCKSIZE);
+
+//Ancho total del canvas incluyendo el panel lateral
+const SIDEBAR_WIDTH = 150;
+let canvasWidth = gameWidth + SIDEBAR_WIDTH;
 
 // Diccionario para saber en qué fila "Y" debe aparecer cada pieza. Algunas necesitan empezar en 1 o en 0.
 let y_start = { 0:1, 1:1, 2:0, 3:1, 4:1, 5:0, 6:1 };
@@ -256,7 +260,7 @@ let previewShape;
 let previewGraphics = [];
 
 function tamanyoCanvasJuego(nivelsel){
-  this.game.scale.setGameSize(gameWidth+130,gameHeight);
+  this.game.scale.setGameSize(canvasWidth,gameHeight);
   nivelSeleccionado = nivelsel;
 };
 
@@ -308,7 +312,7 @@ function resetGame() {
   loopReloj = timer.loop(1000, actualizarReloj, this);
 
   //mostrar el HUD
-  hudJuego.style.display = 'block';
+  hudJuego.style.display = 'flex';
   nivelActual.innerText = nivelSeleccionado;
   puntos.innerText = 0;
   tiempo.innerText = '00';
@@ -375,27 +379,35 @@ function spawn() {
   sonido_tetromino_spawn.play();
 };
 
-function dibujarPreview(){
-  for(let i = 0; i < previewGraphics.length; i++){
+function dibujarPreview() {
+  // Destruye los bloques anteriores
+  for (let i = 0; i < previewGraphics.length; i++) {
     previewGraphics[i].destroy();
   }
   previewGraphics = [];
 
-  let baseX = gameWidth+55;
-  let baseY = 100;
-  if(previewShape==2)
-    baseY = 50;
-
   let dummy = new Tetromino(previewShape, PIECE_COLORS[previewShape], null);
-
   let offsets = dummy.offsets[previewShape];
 
-  for(let i = 0; i< BLOCKS_PER_TETROMINO; i++){
-    let xPos = baseX + (offsets[i][0]*BLOCKSIZE);
-    let yPos = baseY + (offsets[i][1]*BLOCKSIZE);
+  // Calcula el centro real de la pieza sumando todos sus offsets y dividiendo
+  let sumX = 0, sumY = 0;
+  for (let i = 0; i < BLOCKS_PER_TETROMINO; i++) {
+    sumX += offsets[i][0];
+    sumY += offsets[i][1];
+  }
+  let avgX = sumX / BLOCKS_PER_TETROMINO;
+  let avgY = sumY / BLOCKS_PER_TETROMINO;
+
+  // Centro del sidebar en X, posición fija en Y para la preview
+  let centerX = gameWidth + (SIDEBAR_WIDTH / 2);
+  let baseY = 80; // distancia desde el tope del sidebar
+
+  for (let i = 0; i < BLOCKS_PER_TETROMINO; i++) {
+    // Resta el centro real para que la pieza quede centrada en el sidebar
+    let xPos = centerX + (offsets[i][0] - avgX) * BLOCKSIZE - BLOCKSIZE / 2;
+    let yPos = baseY  + (offsets[i][1] - avgY) * BLOCKSIZE;
 
     let g = dummy.renderBlock();
-
     g.x = xPos;
     g.y = yPos;
 
@@ -453,7 +465,7 @@ function makeShade(alpha) {
   if (!shade) {
     shade = game.add.graphics(0, 0);
     shade.beginFill(0xC4B7E7, 1);
-    shade.drawRect(0, 0, gameWidth+130, gameHeight);
+    shade.drawRect(0, 0, canvasWidth, gameHeight);
     shade.endFill();
   }
 

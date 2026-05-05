@@ -12,26 +12,48 @@
 </head>
 <body>
   <div id="wrap">
-    <div>
+    <div id="game-container">
+
       <div id="game"></div>
 
       <div id="HUD">
-        <p id="txtPuntos">Puntuación: </p>
-        <p id="intPuntos">0</p>
-        <p id="txtLineas">Lineas: </p>
-        <p id="intLineas">0</p>
-        <p id="txtObjetivo">Objetivo: </p>
-        <p id="intObjetivo">0</p>
-        
-        <p id="txtNivel">Nivel: </p>
-        <p id="intNivel">0</p>
+        <div id="hud-info">
 
-        <p id="minutos">00</p>
-        <p id="txtTimer">:</p>
-        <p id="segundos">00</p>
+          <div class="hud-block">
+            <span class="hud-label">Nivel</span>
+            <span class="hud-value" id="intNivel">0</span>
+          </div>
+
+          <div class="hud-block">
+            <span class="hud-label">Tiempo</span>
+            <div class="timer-row">
+              <span id="minutos">00</span>
+              <span class="hud-colon">:</span>
+              <span id="segundos">00</span>
+            </div>
+          </div>
+
+          <div class="hud-block">
+            <span class="hud-label">Puntuación</span>
+            <span class="hud-value" id="intPuntos">0</span>
+          </div>
+
+          <div class="hud-block">
+            <span class="hud-label">Líneas</span>
+            <span class="hud-value" id="intLineas">0</span>
+          </div>
+
+          <div class="hud-block">
+            <span class="hud-label">Objetivo</span>
+            <span class="hud-value" id="intObjetivo">0</span>
+          </div>
+
+        </div>
       </div>
+
     </div>
   </div>
+
   <script src="js/lib/phaser.js"></script>
   <script src="js/estilos.js"></script>
   <script src="js/init.js"></script>
