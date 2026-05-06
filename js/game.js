@@ -271,9 +271,24 @@ function tamanyoCanvasJuego(nivelsel){
 function resetGame() {
   game.world.removeAll(); // Borra todos los gráficos en pantalla
 
+  //Reseteamos TODO
   gameOverState = false;
   gameWinState = false;
   currentMovementTimer = 0;
+  pausado = false;
+
+  puntosActual = 0;
+  minutos = 0;
+  tiempoActual = 0;
+  lineasActual = 0;
+
+  cp1Bool = false;
+  cp2Bool = false;
+  cp3Bool = false;
+  cp4Bool = false;
+
+  shade = null;
+  centerText = null
 
   // Creamos el tablero lógico
   theTetris = new Tetris();
@@ -333,7 +348,6 @@ function resetGame() {
 function actualizarReloj(){
   if(gameOverState) return;
   tiempoActual++;
-  console.log(minutos);
   if(tiempoActual==60){
     tiempoActual=0;
     minutos++;
@@ -465,25 +479,18 @@ function setGameWin(on){
 };
 
 function makeShade(alpha) {
-
-  // crear SOLO una vez
-  if (!shade) {
+  if (!shade || !shade.game) {   // shade.game es null si Phaser lo destruyó
     shade = game.add.graphics(0, 0);
     shade.beginFill(0xC4B7E7, 1);
     shade.drawRect(0, 0, canvasWidth, gameHeight);
     shade.endFill();
   }
-
-  // solo cambias visibilidad/opacidad
   shade.alpha = alpha;
 }
 
-
 function updateGame() {
 
-  console.log(loop.delay);
-
-  if(puntosActual == objetivoPuntos){
+  if(puntosActual >= objetivoPuntos){
     setGameWin(true);
   }
 
@@ -616,18 +623,18 @@ function checkLines(candidateLines) {
     collapse(collapsed);
 
   //Checkpoints para aumentar la velocidad a la que bajan las piezas;   SOLUCIONAR va rarete, a golpes y cada vez más rápido
-  if(puntosActual>=cp4 && !cp4Bool){
+   if(puntosActual >= cp4 && !cp4Bool){
     cp4Bool = true;
-    loop.delay = INITIAL_FALL_DELAY-300;
-  } else if(puntosActual>=cp3){
+    loop.delay = INITIAL_FALL_DELAY - 300;
+  } else if(puntosActual >= cp3 && !cp3Bool){
     cp3Bool = true;
-    loop.delay = INITIAL_FALL_DELAY-200;
-  } else if(puntosActual>=cp2){
+    loop.delay = INITIAL_FALL_DELAY - 200;
+  } else if(puntosActual >= cp2 && !cp2Bool){
     cp2Bool = true;
-    loop.delay = INITIAL_FALL_DELAY-150;
-  } else if(puntosActual>=cp1){
+    loop.delay = INITIAL_FALL_DELAY - 150;
+  } else if(puntosActual >= cp1 && !cp1Bool){
     cp1Bool = true;
-    loop.delay = INITIAL_FALL_DELAY-100;
+    loop.delay = INITIAL_FALL_DELAY - 100;
   }
 
 };

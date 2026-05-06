@@ -24,7 +24,7 @@ function preloadNiveles(){
 }
 
 function tamanyoCanvasJuego(){
-  this.game.scale.setGameSize(canvasWidth+150,gameHeight);
+  this.game.scale.setGameSize(canvasWidth,gameHeight);
 };
 
 function createNiveles(){
