@@ -4,8 +4,11 @@ let INITbtnCreditos;
 let INITtxtTitulo;
 let INITbgImg;
 
+// let INITCarga = document.getElementById('imgCarga');
+
 let initState={
     preload: preloadInit,
+    init: tamanyoCanvasJuego,
     create: createInit,
 };
 
@@ -17,6 +20,10 @@ function preloadInit(){
     game.load.audio('sfx_click', 'assets/sonidos/click_button_sound.wav');
     game.load.audio('sfx_hover', 'assets/sonidos/hover_sound.wav');
 }
+
+function tamanyoCanvasJuego(){
+  this.game.scale.setGameSize(canvasWidth,gameHeight);
+};
 
 function createInit(){
     //Posiciones objetos
@@ -35,7 +42,7 @@ function createInit(){
 
     INITbgColor = game.add.graphics(0, 0);
     INITbgColor.beginFill(0xeaa7c7);
-    INITbgColor.drawRect(0, 0, canvasWidth, gameHeight);
+    INITbgColor.drawRect(0, 0, canvasWidth+150, gameHeight);
     INITbgColor.endFill();
 
     /*INITbgImg = game.add.image(0,0,'background');
@@ -63,6 +70,7 @@ function createInit(){
 }
 
 function menuNiveles(){
+    // INITCarga.style.display = 'flex';
     game.state.start('niveles');
 }
 

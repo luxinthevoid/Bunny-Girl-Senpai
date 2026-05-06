@@ -29,6 +29,7 @@ body {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  position: relative;
 }
 
 /* Canvas de Phaser */
@@ -44,18 +45,21 @@ body {
    Ajusta estos valores si cambias BLOCKSIZE o SIDEBAR_WIDTH
 ----------------------------------------------- */
 #HUD {
-  display: none;           /* Phaser lo activa con hudJuego.style.display = 'flex' */
-  width: 150px;            /* Igual que SIDEBAR_WIDTH en game.js */
-  height: 720px;           /* Igual que gameHeight: NUMBLOCKS_Y * BLOCKSIZE = 20 * 36 */
+  display: none;
+  width: 150px;
+  height: 720px;
   flex-direction: column;
   align-items: center;
-  background-color: #0E0E0E;
+  background-color: transparent;  /* ← transparente, el canvas ya tiene fondo */
   box-sizing: border-box;
-  /* Espacio superior para que los datos queden debajo de la preview de Phaser.
-     La preview ocupa ~180px (4 bloques × 36px + margen). Ajusta si la ves encima. */
-  padding-top: 200px;
+  padding-top: 300px;             /* ← ajusta este valor para que quede debajo de la preview */
   padding-left: 8px;
   padding-right: 8px;
+
+  /* Posicionarlo encima del sidebar del canvas */
+  position: absolute;
+  top: 0;
+  left: 360px;
 }
 
 /* Columna de bloques de datos */
@@ -110,4 +114,10 @@ body {
   color: #fef4d7;
   /* Pequeño ajuste óptico para que los dos puntos queden centrados */
   margin-bottom: 2px;
+}
+
+#imgCarga{
+  display: none;
+  width: 100%;
+  height: 100%;
 }

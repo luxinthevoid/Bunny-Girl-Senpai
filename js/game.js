@@ -242,11 +242,14 @@ let nivelActual = document.getElementById('intNivel');
 let tiempo = document.getElementById('segundos');
 let txtMinutos = document.getElementById('minutos');
 let hudObjetivo = document.getElementById('intObjetivo');
+let hudLineas = document.getElementById('intLineas')
+// let GAMECarga = document.getElementById('imgCarga');
 
 let pausado = false; //bool para la pausado
 let nivelSeleccionado, objetivoPuntos;
 let puntosActual = 0;
 let tiempoActual = 0;
+let lineasActual = 0;
 let minutos = 0;
 let loopReloj;
 
@@ -268,9 +271,24 @@ function tamanyoCanvasJuego(nivelsel){
 function resetGame() {
   game.world.removeAll(); // Borra todos los gráficos en pantalla
 
+  //Reseteamos TODO
   gameOverState = false;
   gameWinState = false;
   currentMovementTimer = 0;
+  pausado = false;
+
+  puntosActual = 0;
+  minutos = 0;
+  tiempoActual = 0;
+  lineasActual = 0;
+
+  cp1Bool = false;
+  cp2Bool = false;
+  cp3Bool = false;
+  cp4Bool = false;
+
+  shade = null;
+  centerText = null
 
   // Creamos el tablero lógico
   theTetris = new Tetris();
@@ -316,6 +334,8 @@ function resetGame() {
   nivelActual.innerText = nivelSeleccionado;
   puntos.innerText = 0;
   tiempo.innerText = '00';
+  lineasActual = 0;
+  // GAMECarga.style.display = 'none';
 
   calcularObjetivo();
   hudObjetivo.innerText = objetivoPuntos;
@@ -328,7 +348,6 @@ function resetGame() {
 function actualizarReloj(){
   if(gameOverState) return;
   tiempoActual++;
-  console.log(minutos);
   if(tiempoActual==60){
     tiempoActual=0;
     minutos++;
@@ -423,7 +442,7 @@ function setGameOver(on){
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
 
     //apagamos el HUD del juego
-    hudJuego.style.display = 'none';
+    // hudJuego.style.display = 'none';
 
     // Añade el texto centrado indicando que pulsando R reinicias.
     centerText = game.add.text(game.world.centerX, game.world.centerY,
@@ -445,7 +464,7 @@ function setGameWin(on){
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
 
     //apagamos el HUD del juego
-    hudJuego.style.display = 'none';
+    // hudJuego.style.display = 'none';
 
     // Añade el texto centrado indicando que pulsando R reinicias.
     centerText = game.add.text(game.world.centerX, game.world.centerY,
@@ -460,25 +479,18 @@ function setGameWin(on){
 };
 
 function makeShade(alpha) {
-
-  // crear SOLO una vez
-  if (!shade) {
+  if (!shade || !shade.game) {   // shade.game es null si Phaser lo destruyó
     shade = game.add.graphics(0, 0);
     shade.beginFill(0xC4B7E7, 1);
     shade.drawRect(0, 0, canvasWidth, gameHeight);
     shade.endFill();
   }
-
-  // solo cambias visibilidad/opacidad
   shade.alpha = alpha;
 }
 
-
 function updateGame() {
 
-  console.log(loop.delay);
-
-  if(puntosActual == objetivoPuntos){
+  if(puntosActual >= objetivoPuntos){
     setGameWin(true);
   }
 
@@ -499,8 +511,10 @@ function updateGame() {
   if(!gameOverState){
     if(pausado){
 
-      if (keyHof.isDown)
+      if (keyHof.isDown){
+        hudJuego.style.display = 'none';
         game.state.start('init');
+      }
 
       if (!centerText) {
         centerText = game.add.text(game.world.centerX, game.world.centerY, 'PAUSE\n\nPress Q\nto exit', {
@@ -526,8 +540,10 @@ function updateGame() {
     if (keyRestart.isDown)
       resetGame();
 
-    if (keyHof.isDown)
-      game.state.start('hof');
+    if (keyHof.isDown){
+        hudJuego.style.display = 'none';
+        game.state.start('hof');
+      }
 
     currentMovementTimer = 0;
     return;
@@ -590,7 +606,8 @@ function checkLines(candidateLines) {
       cleanLine(y); // Borra visualmente esa fila
     }
   }
-
+  lineasActual+=collapsed.length;
+  hudLineas.innerText = lineasActual;
   multiplicador = collapsed.length;
   if(multiplicador==1)
     puntosActual += puntosJugada;
@@ -606,18 +623,18 @@ function checkLines(candidateLines) {
     collapse(collapsed);
 
   //Checkpoints para aumentar la velocidad a la que bajan las piezas;   SOLUCIONAR va rarete, a golpes y cada vez más rápido
-  if(puntosActual>=cp4 && !cp4Bool){
+   if(puntosActual >= cp4 && !cp4Bool){
     cp4Bool = true;
-    loop.delay = INITIAL_FALL_DELAY-300;
-  } else if(puntosActual>=cp3){
+    loop.delay = INITIAL_FALL_DELAY - 300;
+  } else if(puntosActual >= cp3 && !cp3Bool){
     cp3Bool = true;
-    loop.delay = INITIAL_FALL_DELAY-200;
-  } else if(puntosActual>=cp2){
+    loop.delay = INITIAL_FALL_DELAY - 200;
+  } else if(puntosActual >= cp2 && !cp2Bool){
     cp2Bool = true;
-    loop.delay = INITIAL_FALL_DELAY-150;
-  } else if(puntosActual>=cp1){
+    loop.delay = INITIAL_FALL_DELAY - 150;
+  } else if(puntosActual >= cp1 && !cp1Bool){
     cp1Bool = true;
-    loop.delay = INITIAL_FALL_DELAY-100;
+    loop.delay = INITIAL_FALL_DELAY - 100;
   }
 
 };
