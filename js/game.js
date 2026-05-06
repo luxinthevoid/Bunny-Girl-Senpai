@@ -441,9 +441,6 @@ function setGameOver(on){
     timer.pause(); // Para que dejen de caer piezas.
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
 
-    //apagamos el HUD del juego
-    // hudJuego.style.display = 'none';
-
     // Añade el texto centrado indicando que pulsando R reinicias.
     centerText = game.add.text(game.world.centerX, game.world.centerY,
       'GAME OVER\n\nPress R to restart,\nQ to go to\nHall of Fame', {
@@ -462,9 +459,6 @@ function setGameWin(on){
   if (gameWinState) {
     timer.pause(); // Para que dejen de caer piezas.
     makeShade(0.65); // Dibuja la sombra negra semitransparente.
-
-    //apagamos el HUD del juego
-    // hudJuego.style.display = 'none';
 
     // Añade el texto centrado indicando que pulsando R reinicias.
     centerText = game.add.text(game.world.centerX, game.world.centerY,
@@ -501,10 +495,24 @@ function updateGame() {
       centerText.visible = false;
       makeShade(0);
       timer.resume();
+      hudJuego.style.display = 'flex';
+
+      //Mostrar tetromino y preview
+      for(let i = 0; i < previewGraphics.length; i++)
+      previewGraphics[i].visible = true;
+    for(let i = 0; i < tetromino.blocks.length; i++)
+      tetromino.blocks[i].visible = true;
     } else{
       pausado=true;
       makeShade(0.65);
       timer.pause();
+      hudJuego.style.display = 'none';
+
+      //Ocultar tetromino
+      for(let i = 0; i < previewGraphics.length; i++)
+      previewGraphics[i].visible = false;
+      for(let i = 0; i < tetromino.blocks.length; i++)
+      tetromino.blocks[i].visible = false;
     }
   }
 
