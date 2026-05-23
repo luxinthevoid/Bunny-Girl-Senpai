@@ -288,7 +288,7 @@ function resetGame() {
   cp4Bool = false;
 
   shade = null;
-  centerText = null
+  centerText = null;
 
   // Creamos el tablero lógico
   theTetris = new Tetris();

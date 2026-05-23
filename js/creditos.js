@@ -10,15 +10,18 @@ let creditosState={
 };
 
 function preloadCreditos(){
-    game.load.image('background','assets/imgs/zen_background.jpg');
-    game.load.image('play','assets/playButton.webp');
+    game.load.image('btnVolver','assets/imgs/UI/Boton_normal.png');
+    game.load.image('btnVolverHover','assets/imgs/UI/Boton_hover.png');
+    game.load.image('background','assets/imgs/UI/Menu_BG.png');
 }
 
 function tamanyoCanvasJuego(){
-  this.game.scale.setGameSize(canvasWidth+150,gameHeight);
+  this.game.scale.setGameSize(canvasWidth,gameHeight);
 };
 
 function createCreditos(){
+    let sfxClick = game.add.audio('sfx_click');
+    let sfxHover = game.add.audio('sfx_hover');
 
     //Posiciones objetos
     let CRstart_posX=game.world.width * 0.5;   //BOTON START
@@ -28,12 +31,18 @@ function createCreditos(){
     let CRtext_posY=game.world.height * 0.25;
 
     CRbgImg = game.add.image(0,0,'background');
-    CRbgImg.width = gameWidth+450;
-    CRbgImg.height = gameHeight+300;
 
-    CRbtnVolver=game.add.button(CRstart_posX,CRstart_posY,'play', mainMenu);
-    CRbtnVolver.anchor.setTo(0.5,0.5);
-    CRbtnVolver.scale.setTo(0.15);
+    BotonVolver = game.add.button(game.world.width * 0.50, game.world.height * 0.9,'btnVolver',
+        function(){ sfxClick.play(); mainMenu(); });
+
+    BotonVolver.onInputOver.add(
+        function() {BotonVolver.loadTexture('btnVolverHover'); sfxHover.play();});
+
+    BotonVolver.onInputOut.add(
+        function() {BotonVolver.loadTexture('btnVolver');});
+
+    BotonVolver.anchor.setTo(0.5, 0.5);
+    BotonVolver.scale.setTo(1);
 
     CRtxtCreditos = game.add.text(CRtext_posX,CRtext_posY,'Juego creador por:\nLorena López\ny\nAdrián Chica', estiloTitulo);
     CRtxtCreditos.anchor.setTo(0.5, 0.5);
