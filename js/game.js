@@ -201,6 +201,7 @@ class Tetromino {
 
 // Define el estado principal. Phaser llamará a create al inicio y update en bucle a 60fps.
 let gameState = {
+  preload: preloadGame,
   create: resetGame,
   init: tamanyoCanvasJuego,
   update: updateGame
@@ -261,6 +262,10 @@ let cp4Bool = false;
 
 let previewShape;
 let previewGraphics = [];
+
+function preloadGame(){
+  game.load.json('datosNiveles','assets/JSON/niveles.json');
+};
 
 function tamanyoCanvasJuego(nivelsel){
   this.game.scale.setGameSize(canvasWidth,gameHeight);
@@ -329,6 +334,15 @@ function resetGame() {
   tiempoActual = 0;
   loopReloj = timer.loop(1000, actualizarReloj, this);
 
+  //Datos de los niveles
+  let data = game.cache.getJSON('datosNiveles');
+  let nivelInfo = data.niveles.find(n => n.id ===nivelSeleccionado);
+  
+  if(nivelInfo){
+    objetivoPuntos = nivelInfo.objetivo;
+    console.log("Objetivo: "+nivelSeleccionado+" Puntos objetivo: "+ objetivoPuntos);
+  };
+
   //mostrar el HUD
   hudJuego.style.display = 'flex';
   nivelActual.innerText = nivelSeleccionado;
@@ -337,7 +351,6 @@ function resetGame() {
   lineasActual = 0;
   // GAMECarga.style.display = 'none';
 
-  calcularObjetivo();
   hudObjetivo.innerText = objetivoPuntos;
   calcularCheckPoints();
 
@@ -692,11 +705,6 @@ function collapse(linesToCollapse) {
       theTetris.sceneBlocks[x2][0] = null;
     }
   }
-};
-
-function calcularObjetivo(){
-  objetivoPuntos = 67*5*nivelSeleccionado;
-  console.log(objetivoPuntos);
 };
 
 function calcularCheckPoints(){   //calcula en que puntuaciones debe aumentar las velocidades de las piezas

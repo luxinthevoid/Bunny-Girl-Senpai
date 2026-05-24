@@ -1,0 +1,10 @@
+{
+  "niveles": [
+    { "id": 1, "objetivo": 250},
+    { "id": 2, "objetivo": 400},
+    { "id": 3, "objetivo": 550},
+    { "id": 4, "objetivo": 750},
+    { "id": 5, "objetivo": 1000},
+    { "id": 6, "objetivo": 2000}
+  ]
+}
