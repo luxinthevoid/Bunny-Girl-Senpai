@@ -7,8 +7,8 @@ const MOVEMENT_LAG = 85;            // Retraso en milisegundos para evitar que l
 const INITIAL_FALL_DELAY = 600;     // Tiempo en ms que tarda la pieza en caer una fila automáticamente por gravedad.
 
 // 7 tetrominoes, rotation around a center cell
-const BLOCKS_PER_TETROMINO = 4;     // Cada pieza (tetrimino) está formada exactamente por 4 bloques.
-const N_BLOCK_TYPES = 7;            // Existen 7 formas clásicas (I, J, L, O, S, T, Z).
+// const BLOCKS_PER_TETROMINO = 4;     // Cada pieza (tetrimino) está formada exactamente por 4 bloques.
+const N_BLOCK_TYPES = 10;            // Existen 7 formas clásicas (I, J, L, O, S, T, Z).
 
 // Color de las piezas:
 const PIECE_COLORS = [
@@ -18,7 +18,11 @@ const PIECE_COLORS = [
  0xf2baaf,
  0xeda7a2,
  0xe99394,
- 0xe58087];
+ 0xe58087,
+ 0xbbe580,
+ 0x80e5bb,
+ 0x80bbe5
+];
 
 // Scene grid values
 // Se usan para definir el estado lógico de cada celda de la cuadrícula.
@@ -86,7 +90,10 @@ class Tetromino {
       3 : [[-1,-1],[0,-1],[0,0],[-1,0]],  // O (Cuadrado)
       4 : [[-1,0],[0,0],[0,-1],[1,-1]],   // S
       5 : [[-1,0],[0,0],[1,0],[0,1]],     // T
-      6 : [[-1,-1],[0,-1],[0,0],[1,0]]    // Z
+      6 : [[-1,-1],[0,-1],[0,0],[1,0]],  // Z
+      7 : [[-1,0],[-1,-1],[0,-1],[1,-1],[1,0]], //C (puente)
+      8 : [[-1,1],[0,0],[1,1]], // V
+      9 : [[0,-1],[0,0],[0,1],[1,0],[1,1]] // F
     }
   }
 
@@ -106,7 +113,7 @@ class Tetromino {
     this.center = [c_x, c_y]; // Establece el pivote.
 
     let conflict = false;
-    for (let i = 0; i < BLOCKS_PER_TETROMINO; i++) {
+    for (let i = 0; i < this.offsets[this.shape].length; i++) {
       // Calcula la posición real sumando el centro más el offset de su forma.
       let x = c_x + this.offsets[this.shape][i][0];
       let y = c_y + this.offsets[this.shape][i][1];
@@ -218,7 +225,7 @@ const SIDEBAR_WIDTH = 150;
 let canvasWidth = gameWidth + SIDEBAR_WIDTH;
 
 // Diccionario para saber en qué fila "Y" debe aparecer cada pieza. Algunas necesitan empezar en 1 o en 0.
-let y_start = { 0:1, 1:1, 2:0, 3:1, 4:1, 5:0, 6:1 };
+let y_start = { 0:1, 1:1, 2:0, 3:1, 4:1, 5:0, 6:1, 7:1, 8:1, 9:1 };
 
 // Diccionario de direcciones que convierte palabras en vectores (movimiento en x, movimiento en y).
 let move_offsets = {
@@ -361,7 +368,10 @@ function resetGame() {
   hudUsuario.innerText = "User";
   hudUsuario.onclick = cambiarNombre;
 
-  hudObjetivo.innerText = objetivoPuntos;
+  if(nivelSeleccionado==4){
+    hudObjetivo.innerText = objetivoPuntos+"/60 seg";
+  }else hudObjetivo.innerText = objetivoPuntos;
+  
   calcularCheckPoints();
 
   previewShape = Math.floor(Math.random()* modificadorSetTetrominos);
@@ -433,18 +443,18 @@ function dibujarPreview() {
 
   // Calcula el centro real de la pieza sumando todos sus offsets y dividiendo
   let sumX = 0, sumY = 0;
-  for (let i = 0; i < BLOCKS_PER_TETROMINO; i++) {
+  for (let i = 0; i < offsets.length; i++) {
     sumX += offsets[i][0];
     sumY += offsets[i][1];
   }
-  let avgX = sumX / BLOCKS_PER_TETROMINO;
-  let avgY = sumY / BLOCKS_PER_TETROMINO;
+  let avgX = sumX / offsets.length;
+  let avgY = sumY / offsets.length;
 
   // Centro del sidebar en X, posición fija en Y para la preview
   let centerX = gameWidth + (SIDEBAR_WIDTH / 2);
   let baseY = 80; // distancia desde el tope del sidebar
 
-  for (let i = 0; i < BLOCKS_PER_TETROMINO; i++) {
+  for (let i = 0; i < offsets.length; i++) {
     // Resta el centro real para que la pieza quede centrada en el sidebar
     let xPos = centerX + (offsets[i][0] - avgX) * BLOCKSIZE - BLOCKSIZE / 2;
     let yPos = baseY  + (offsets[i][1] - avgY) * BLOCKSIZE;
@@ -507,9 +517,13 @@ function makeShade(alpha) {
 
 function updateGame() {
 
+  if(nivelSeleccionado == 4 && minutos == 1){
+    setGameOver(true);
+  };
+
   if(puntosActual >= objetivoPuntos){
     setGameWin(true);
-  }
+  };
 
   //Control de la pausa
   if(keyPausa.justDown){
