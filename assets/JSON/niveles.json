@@ -1,10 +1,8 @@
 {
   "niveles": [
-    { "id": 1, "objetivo": 250},
-    { "id": 2, "objetivo": 400},
-    { "id": 3, "objetivo": 550},
-    { "id": 4, "objetivo": 750},
-    { "id": 5, "objetivo": 1000},
-    { "id": 6, "objetivo": 2000}
+    { "id": 1, "objetivo": 100, "set": 3, "velocidad": 0},
+    { "id": 2, "objetivo": 200, "set": 5, "velocidad": 100},
+    { "id": 3, "objetivo": 300, "set": 7, "velocidad": 200},
+    { "id": 4, "objetivo": 500, "set": 9, "velocidad": 300}
   ]
 }

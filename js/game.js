@@ -243,8 +243,8 @@ let nivelActual = document.getElementById('intNivel');
 let tiempo = document.getElementById('segundos');
 let txtMinutos = document.getElementById('minutos');
 let hudObjetivo = document.getElementById('intObjetivo');
-let hudLineas = document.getElementById('intLineas')
-// let GAMECarga = document.getElementById('imgCarga');
+let hudLineas = document.getElementById('intLineas');
+let hudUsuario = document.getElementById('usuario');
 
 let pausado = false; //bool para la pausado
 let nivelSeleccionado, objetivoPuntos;
@@ -253,6 +253,8 @@ let tiempoActual = 0;
 let lineasActual = 0;
 let minutos = 0;
 let loopReloj;
+
+let modificadorDificultad, modificadorSetTetrominos;
 
 let cp1,cp2,cp3,cp4;
 let cp1Bool = false;
@@ -340,7 +342,14 @@ function resetGame() {
   
   if(nivelInfo){
     objetivoPuntos = nivelInfo.objetivo;
-    console.log("Objetivo: "+nivelSeleccionado+" Puntos objetivo: "+ objetivoPuntos);
+    modificadorDificultad = nivelInfo.velocidad;
+    modificadorSetTetrominos = nivelInfo.set;
+
+    loop.delay = INITIAL_FALL_DELAY - modificadorDificultad; //modificamos velocidad caida
+    console.log("Objetivo: "+nivelSeleccionado
+      +" Puntos objetivo: "+ objetivoPuntos
+      +" Set: "+modificadorSetTetrominos
+      +" velocidad: "+(INITIAL_FALL_DELAY-modificadorDificultad));
   };
 
   //mostrar el HUD
@@ -349,12 +358,13 @@ function resetGame() {
   puntos.innerText = 0;
   tiempo.innerText = '00';
   lineasActual = 0;
-  // GAMECarga.style.display = 'none';
+  hudUsuario.innerText = "User";
+  hudUsuario.onclick = cambiarNombre;
 
   hudObjetivo.innerText = objetivoPuntos;
   calcularCheckPoints();
 
-  previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
+  previewShape = Math.floor(Math.random()* modificadorSetTetrominos);
   spawn(); // Nace la primera pieza
 };
 
@@ -405,7 +415,7 @@ function spawn() {
   // Si al nacer ya está en conflicto (chocando con otra), Game Over.
   if (conflict) setGameOver(true);
 
-  previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
+  previewShape = Math.floor(Math.random()* modificadorSetTetrominos);
   dibujarPreview();
 
   sonido_tetromino_spawn.play();
@@ -556,14 +566,14 @@ function updateGame() {
   // Si no ha pasado el lag mínimo (85ms), aborta lectura de teclas para no ir demasiado rápido
   if (currentMovementTimer <= MOVEMENT_LAG) return;
 
-  if (gameOverState) {
+  if (gameOverState || gameWinState) {
     // Si estás muerto, solo escucha la tecla R para reiniciar.
     if (keyRestart.isDown)
       resetGame();
 
     if (keyHof.isDown){
         hudJuego.style.display = 'none';
-        game.state.start('hof');
+        game.state.start('hof', true, false, hudUsuario.innerText, puntosActual);
       }
 
     currentMovementTimer = 0;
@@ -589,6 +599,8 @@ function updateGame() {
 
   // Reinicia el timer para que haya que esperar otros 85ms antes de registrar otro movimiento.
   currentMovementTimer = 0;
+
+  console.log(loop.delay);
 };
 
 // Fija la pieza actual convirtiéndola en estado 'OCCUPIED' en la matriz.
@@ -646,16 +658,16 @@ function checkLines(candidateLines) {
   //Checkpoints para aumentar la velocidad a la que bajan las piezas;   SOLUCIONAR va rarete, a golpes y cada vez más rápido
    if(puntosActual >= cp4 && !cp4Bool){
     cp4Bool = true;
-    loop.delay = INITIAL_FALL_DELAY - 300;
+    loop.delay -= 25;
   } else if(puntosActual >= cp3 && !cp3Bool){
     cp3Bool = true;
-    loop.delay = INITIAL_FALL_DELAY - 200;
+    loop.delay -= 25;
   } else if(puntosActual >= cp2 && !cp2Bool){
     cp2Bool = true;
-    loop.delay = INITIAL_FALL_DELAY - 150;
+    loop.delay -= 25;
   } else if(puntosActual >= cp1 && !cp1Bool){
     cp1Bool = true;
-    loop.delay = INITIAL_FALL_DELAY - 100;
+    loop.delay -= 25;
   }
 
 };
@@ -712,4 +724,12 @@ function calcularCheckPoints(){   //calcula en que puntuaciones debe aumentar la
   cp2 = objetivoPuntos*0.3;
   cp3 = objetivoPuntos*0.5;
   cp4 = objetivoPuntos*0.7;
+}
+
+function cambiarNombre(){
+  let nuevoNombre = prompt("Introduce tu nombre: "+ hudUsuario.innerText);
+
+  if(nuevoNombre != null && nuevoNombre !=""){
+    hudUsuario.innerText = nuevoNombre;
+  };
 }
