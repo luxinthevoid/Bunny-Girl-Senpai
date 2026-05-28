@@ -259,6 +259,7 @@ let gameState = {
   preload: preloadGame,
   create: resetGame,
   init: tamanyoCanvasJuego,
+  create: resetGame,
   update: updateGame
 };
 
@@ -352,6 +353,17 @@ function resetGame() {
   shade = null;
   centerText = null;
 
+  // Obtener datos json
+  let data = game.cache.getJSON('datosNiveles');
+
+  // Buscar el nivel actual dentro del array "niveles"
+  // Buscamos el objeto cuyo id coincida con nivelSeleccionado
+  let nivelInfo = data.niveles.find(n => n.id === nivelSeleccionado);
+  if(nivelInfo){
+    objetivoPuntos = nivelInfo.objetivo;
+    console.log("Nivel y objetivo: "+ nivelSeleccionado + objetivoPuntos);
+  }
+
   // Creamos el tablero lógico
   theTetris = new Tetris();
   theTetris.initGrid();
@@ -390,10 +402,6 @@ function resetGame() {
   //Codigo para reloj de partida
   tiempoActual = 0;
   loopReloj = timer.loop(1000, actualizarReloj, this);
-
-  //Datos de los niveles
-  let data = game.cache.getJSON('datosNiveles');
-  let nivelInfo = data.niveles.find(n => n.id ===nivelSeleccionado);
   
   if(nivelInfo){
     objetivoPuntos = nivelInfo.objetivo;
