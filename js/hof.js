@@ -18,7 +18,7 @@ function preloadHof(){
 }
 
 function tamanyoCanvasJuego(nombreUsuario, puntos, nivelSeleccionado, objetivo){
-  this.game.scale.setGameSize(canvasWidth+150,gameHeight);
+  this.game.scale.setGameSize(canvasWidth,gameHeight);
   nombre = nombreUsuario;
   puntosFinal = puntos;
   nivel = nivelSeleccionado;
