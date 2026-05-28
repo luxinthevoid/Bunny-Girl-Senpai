@@ -7,8 +7,8 @@ const MOVEMENT_LAG = 85;            // Retraso en milisegundos para evitar que l
 const INITIAL_FALL_DELAY = 600;     // Tiempo en ms que tarda la pieza en caer una fila automáticamente por gravedad.
 
 // 7 tetrominoes, rotation around a center cell
-const BLOCKS_PER_TETROMINO = 4;     // Cada pieza (tetrimino) está formada exactamente por 4 bloques.
-const N_BLOCK_TYPES = 7;            // Existen 7 formas clásicas (I, J, L, O, S, T, Z).
+// const BLOCKS_PER_TETROMINO = 4;     // Cada pieza (tetrimino) está formada exactamente por 4 bloques.
+const N_BLOCK_TYPES = 10;            // Existen 7 formas clásicas (I, J, L, O, S, T, Z).
 
 // Color de las piezas:
 const PIECE_COLORS = [
@@ -18,7 +18,11 @@ const PIECE_COLORS = [
  0xf2baaf,
  0xeda7a2,
  0xe99394,
- 0xe58087];
+ 0xe58087,
+ 0xbbe580,
+ 0x80e5bb,
+ 0x80bbe5
+];
 
 // Scene grid values
 // Se usan para definir el estado lógico de cada celda de la cuadrícula.
@@ -30,6 +34,10 @@ const OCCUPIED = 2;                 // La celda tiene un bloque fijo (chocó y s
 const sonido_tetromino_spawn = new Audio('assets/sonidos/beep_sound_spawn.wav');
 const sonido_tetromino_chocar = new Audio('assets/sonidos/snap_sound.wav');
 const sonido_hacer_fila = new Audio('assets/sonidos/line_sound.wav');
+const sonido_win = new Audio('assets/sonidos/win.wav');
+const sonido_timer = new Audio('assets/sonidos/timer.wav');
+const sonido_lose = new Audio('assets/sonidos/lose.wav');
+const sonido_pared = new Audio('assets/sonidos/pared.wav');
 
 /**
  * Clase que gestiona el Tablero (La cuadrícula lógica y visual)
@@ -86,7 +94,10 @@ class Tetromino {
       3 : [[-1,-1],[0,-1],[0,0],[-1,0]],  // O (Cuadrado)
       4 : [[-1,0],[0,0],[0,-1],[1,-1]],   // S
       5 : [[-1,0],[0,0],[1,0],[0,1]],     // T
-      6 : [[-1,-1],[0,-1],[0,0],[1,0]]    // Z
+      6 : [[-1,-1],[0,-1],[0,0],[1,0]],  // Z
+      7 : [[-1,0],[-1,-1],[0,-1],[1,-1],[1,0]], //C (puente)
+      8 : [[-1,1],[0,0],[1,1]], // V
+      9 : [[0,-1],[0,0],[0,1],[1,0],[1,1]] // F
     }
   }
 
@@ -106,7 +117,7 @@ class Tetromino {
     this.center = [c_x, c_y]; // Establece el pivote.
 
     let conflict = false;
-    for (let i = 0; i < BLOCKS_PER_TETROMINO; i++) {
+    for (let i = 0; i < this.offsets[this.shape].length; i++) {
       // Calcula la posición real sumando el centro más el offset de su forma.
       let x = c_x + this.offsets[this.shape][i][0];
       let y = c_y + this.offsets[this.shape][i][1];
@@ -202,6 +213,7 @@ class Tetromino {
 // Define el estado principal. Phaser llamará a create al inicio y update en bucle a 60fps.
 let gameState = {
   preload: preloadGame,
+  create: resetGame,
   init: tamanyoCanvasJuego,
   create: resetGame,
   update: updateGame
@@ -218,7 +230,7 @@ const SIDEBAR_WIDTH = 150;
 let canvasWidth = gameWidth + SIDEBAR_WIDTH;
 
 // Diccionario para saber en qué fila "Y" debe aparecer cada pieza. Algunas necesitan empezar en 1 o en 0.
-let y_start = { 0:1, 1:1, 2:0, 3:1, 4:1, 5:0, 6:1 };
+let y_start = { 0:1, 1:1, 2:0, 3:1, 4:1, 5:0, 6:1, 7:1, 8:1, 9:1 };
 
 // Diccionario de direcciones que convierte palabras en vectores (movimiento en x, movimiento en y).
 let move_offsets = {
@@ -243,8 +255,8 @@ let nivelActual = document.getElementById('intNivel');
 let tiempo = document.getElementById('segundos');
 let txtMinutos = document.getElementById('minutos');
 let hudObjetivo = document.getElementById('intObjetivo');
-let hudLineas = document.getElementById('intLineas')
-// let GAMECarga = document.getElementById('imgCarga');
+let hudLineas = document.getElementById('intLineas');
+let hudUsuario = document.getElementById('usuario');
 
 let pausado = false; //bool para la pausado
 let nivelSeleccionado, objetivoPuntos;
@@ -253,6 +265,8 @@ let tiempoActual = 0;
 let lineasActual = 0;
 let minutos = 0;
 let loopReloj;
+
+let modificadorDificultad, modificadorSetTetrominos;
 
 let cp1,cp2,cp3,cp4;
 let cp1Bool = false;
@@ -264,8 +278,8 @@ let previewShape;
 let previewGraphics = [];
 
 function preloadGame(){
-  game.load.json('datosNiveles','assets/JSON niveles/niveles.json');
-}
+  game.load.json('datosNiveles','assets/JSON/niveles.json');
+};
 
 function tamanyoCanvasJuego(nivelsel){
   this.game.scale.setGameSize(canvasWidth,gameHeight);
@@ -344,6 +358,18 @@ function resetGame() {
   //Codigo para reloj de partida
   tiempoActual = 0;
   loopReloj = timer.loop(1000, actualizarReloj, this);
+  
+  if(nivelInfo){
+    objetivoPuntos = nivelInfo.objetivo;
+    modificadorDificultad = nivelInfo.velocidad;
+    modificadorSetTetrominos = nivelInfo.set;
+
+    loop.delay = INITIAL_FALL_DELAY - modificadorDificultad; //modificamos velocidad caida
+    console.log("Objetivo: "+nivelSeleccionado
+      +" Puntos objetivo: "+ objetivoPuntos
+      +" Set: "+modificadorSetTetrominos
+      +" velocidad: "+(INITIAL_FALL_DELAY-modificadorDificultad));
+  };
 
   //mostrar el HUD
   hudJuego.style.display = 'flex';
@@ -351,12 +377,16 @@ function resetGame() {
   puntos.innerText = 0;
   tiempo.innerText = '00';
   lineasActual = 0;
-  // GAMECarga.style.display = 'none';
+  hudUsuario.innerText = "User";
+  hudUsuario.onclick = cambiarNombre;
 
-  hudObjetivo.innerText = objetivoPuntos;
+  if(nivelSeleccionado==4){
+    hudObjetivo.innerText = objetivoPuntos+"/60 seg";
+  }else hudObjetivo.innerText = objetivoPuntos;
+  
   calcularCheckPoints();
 
-  previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
+  previewShape = Math.floor(Math.random()* modificadorSetTetrominos);
   spawn(); // Nace la primera pieza
 };
 
@@ -366,6 +396,7 @@ function actualizarReloj(){
   if(tiempoActual==60){
     tiempoActual=0;
     minutos++;
+    sonido_timer.play();
   }
 
   if(minutos<10)
@@ -407,7 +438,7 @@ function spawn() {
   // Si al nacer ya está en conflicto (chocando con otra), Game Over.
   if (conflict) setGameOver(true);
 
-  previewShape = Math.floor(Math.random()* N_BLOCK_TYPES);
+  previewShape = Math.floor(Math.random()* modificadorSetTetrominos);
   dibujarPreview();
 
   sonido_tetromino_spawn.play();
@@ -425,18 +456,18 @@ function dibujarPreview() {
 
   // Calcula el centro real de la pieza sumando todos sus offsets y dividiendo
   let sumX = 0, sumY = 0;
-  for (let i = 0; i < BLOCKS_PER_TETROMINO; i++) {
+  for (let i = 0; i < offsets.length; i++) {
     sumX += offsets[i][0];
     sumY += offsets[i][1];
   }
-  let avgX = sumX / BLOCKS_PER_TETROMINO;
-  let avgY = sumY / BLOCKS_PER_TETROMINO;
+  let avgX = sumX / offsets.length;
+  let avgY = sumY / offsets.length;
 
   // Centro del sidebar en X, posición fija en Y para la preview
   let centerX = gameWidth + (SIDEBAR_WIDTH / 2);
   let baseY = 80; // distancia desde el tope del sidebar
 
-  for (let i = 0; i < BLOCKS_PER_TETROMINO; i++) {
+  for (let i = 0; i < offsets.length; i++) {
     // Resta el centro real para que la pieza quede centrada en el sidebar
     let xPos = centerX + (offsets[i][0] - avgX) * BLOCKSIZE - BLOCKSIZE / 2;
     let yPos = baseY  + (offsets[i][1] - avgY) * BLOCKSIZE;
@@ -465,6 +496,7 @@ function setGameOver(on){
       }
     );
     centerText.anchor.set(0.5); // Centra el eje del texto
+    sonido_lose.play();
   }
 };
 
@@ -484,6 +516,7 @@ function setGameWin(on){
       }
     );
     centerText.anchor.set(0.5); // Centra el eje del texto
+    sonido_win.play();
   }
 };
 
@@ -499,9 +532,13 @@ function makeShade(alpha) {
 
 function updateGame() {
 
+  if(nivelSeleccionado == 4 && minutos == 1){
+    setGameOver(true);
+  };
+
   if(puntosActual >= objetivoPuntos){
     setGameWin(true);
-  }
+  };
 
   //Control de la pausa
   if(keyPausa.justDown){
@@ -558,14 +595,14 @@ function updateGame() {
   // Si no ha pasado el lag mínimo (85ms), aborta lectura de teclas para no ir demasiado rápido
   if (currentMovementTimer <= MOVEMENT_LAG) return;
 
-  if (gameOverState) {
+  if (gameOverState || gameWinState) {
     // Si estás muerto, solo escucha la tecla R para reiniciar.
     if (keyRestart.isDown)
       resetGame();
 
     if (keyHof.isDown){
         hudJuego.style.display = 'none';
-        game.state.start('hof');
+        game.state.start('hof', true, false, hudUsuario.innerText, puntosActual);
       }
 
     currentMovementTimer = 0;
@@ -573,12 +610,22 @@ function updateGame() {
   };
 
   // Comprueba flechas: Si pulsas y se puede mover, mueve.
-  if (cursors.left.isDown && tetromino.canMove(tetromino.slide.bind(tetromino), 'left')) {
-    tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'left');
-  } else if (cursors.right.isDown && tetromino.canMove(tetromino.slide.bind(tetromino), 'right')) {
-    tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'right');
-  } else if (cursors.down.isDown && tetromino.canMove(tetromino.slide.bind(tetromino), 'down')) {
-    tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'down');
+  if (cursors.left.isDown){
+    if(tetromino.canMove(tetromino.slide.bind(tetromino), 'left')) {
+      tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'left');
+    } else {
+      if (!sonido_pared.isPlaying) sonido_pared.play();
+    }
+  }else if (cursors.right.isDown){
+    if(tetromino.canMove(tetromino.slide.bind(tetromino), 'right')) {
+      tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'right');
+    } else {
+      if (!sonido_pared.isPlaying) sonido_pared.play();
+    }
+  }else if (cursors.down.isDown){
+    if(tetromino.canMove(tetromino.slide.bind(tetromino), 'down')) {
+      tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'down');
+    } 
   } else if (keyRotate.isDown) {
     // La tecla arriba rota (Sentido horario).
     // Nota: la rotación de la pieza O no sirve de nada visualmente, pero la lógica lo permite.
@@ -591,6 +638,8 @@ function updateGame() {
 
   // Reinicia el timer para que haya que esperar otros 85ms antes de registrar otro movimiento.
   currentMovementTimer = 0;
+
+  console.log(loop.delay);
 };
 
 // Fija la pieza actual convirtiéndola en estado 'OCCUPIED' en la matriz.
@@ -648,16 +697,16 @@ function checkLines(candidateLines) {
   //Checkpoints para aumentar la velocidad a la que bajan las piezas;   SOLUCIONAR va rarete, a golpes y cada vez más rápido
    if(puntosActual >= cp4 && !cp4Bool){
     cp4Bool = true;
-    loop.delay = INITIAL_FALL_DELAY - 300;
+    loop.delay -= 25;
   } else if(puntosActual >= cp3 && !cp3Bool){
     cp3Bool = true;
-    loop.delay = INITIAL_FALL_DELAY - 200;
+    loop.delay -= 25;
   } else if(puntosActual >= cp2 && !cp2Bool){
     cp2Bool = true;
-    loop.delay = INITIAL_FALL_DELAY - 150;
+    loop.delay -= 25;
   } else if(puntosActual >= cp1 && !cp1Bool){
     cp1Bool = true;
-    loop.delay = INITIAL_FALL_DELAY - 100;
+    loop.delay -= 25;
   }
 
 };
@@ -714,4 +763,12 @@ function calcularCheckPoints(){   //calcula en que puntuaciones debe aumentar la
   cp2 = objetivoPuntos*0.3;
   cp3 = objetivoPuntos*0.5;
   cp4 = objetivoPuntos*0.7;
+}
+
+function cambiarNombre(){
+  let nuevoNombre = prompt("Introduce tu nombre: "+ hudUsuario.innerText);
+
+  if(nuevoNombre != null && nuevoNombre !=""){
+    hudUsuario.innerText = nuevoNombre;
+  };
 }

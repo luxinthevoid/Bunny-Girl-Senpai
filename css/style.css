@@ -96,6 +96,10 @@ body {
   line-height: 1;
 }
 
+#usuario{
+  cursor: pointer;
+}
+
 /* Fila del reloj: MM : SS en horizontal */
 .timer-row {
   display: flex;
