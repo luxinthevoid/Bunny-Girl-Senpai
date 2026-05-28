@@ -44,7 +44,7 @@ function createCreditos(){
     BotonVolver.anchor.setTo(0.5, 0.5);
     BotonVolver.scale.setTo(1);
 
-    CRtxtCreditos = game.add.text(CRtext_posX,CRtext_posY,'Juego creador por:\nLorena López\ny\nAdrián Chica', estiloTitulo);
+    CRtxtCreditos = game.add.text(CRtext_posX,CRtext_posY,'Game created by:\nLorena López\nand\nAdrián Chica', estiloTitulo);
     CRtxtCreditos.anchor.setTo(0.5, 0.5);
 }
 

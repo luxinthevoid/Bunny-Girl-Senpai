@@ -4,6 +4,8 @@ let LPTexto;
 let HOFListaPuntos = "";
 let nombre;
 let puntosFinal;
+let nivel;
+let objetivo;
 
 let hofState={
     preload: preloadHof,
@@ -15,10 +17,12 @@ function preloadHof(){
     game.load.image('ttt','assets/lilTung.png');
 }
 
-function tamanyoCanvasJuego(nombreUsuario, puntos){
+function tamanyoCanvasJuego(nombreUsuario, puntos, nivelSeleccionado, objetivo){
   this.game.scale.setGameSize(canvasWidth+150,gameHeight);
   nombre = nombreUsuario;
   puntosFinal = puntos;
+  nivel = nivelSeleccionado;
+  complete = objetivo;
 };
 
 function createHof(){
@@ -28,7 +32,10 @@ function createHof(){
     let HOFtext_posX=game.world.width * 0.5;
     let HOFtext_posY=game.world.height * 0.15;
 
-    HOFListaPuntos = HOFListaPuntos+nombre+": "+puntosFinal+"\n";
+    if(nombre!=undefined){
+        HOFListaPuntos = HOFListaPuntos+nombre+":   "+nivel+" - "+puntosFinal+"/"+complete+"\n";
+    };
+    
     LPTexto = game.add.text(game.world.width*0.5,game.world.height*0.3,HOFListaPuntos, estiloText);
     LPTexto.anchor.setTo(0.5, 0);
 

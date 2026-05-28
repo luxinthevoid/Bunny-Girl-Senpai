@@ -24,6 +24,14 @@ const PIECE_COLORS = [
  0x80bbe5
 ];
 
+const kicks = [
+      ['right', 1, 'left'],
+      ['left',  1, 'right'],
+      ['right', 2, 'left'],
+      ['left',  2, 'right'],
+      ['down',  1, 'up'] // Kick hacia arriba (empujando el mundo hacia abajo)
+    ];
+
 // Scene grid values
 // Se usan para definir el estado lógico de cada celda de la cuadrícula.
 const EMPTY = 0;                    // La celda está vacía.
@@ -175,6 +183,42 @@ class Tetromino {
     ny = -ny;
 
     return [c_x + nx, c_y + ny]; // Devuelve la coordenada global sumándole de nuevo el centro.
+  }
+
+  rotateWithWallKick() {
+    // Caso Normal: Si puede rotar libremente, lo hace y terminamos.
+    if (this.canMove(this.rotate.bind(this), 'clockwise')) {
+      this.move(this.rotate.bind(this), null, 'clockwise');
+      return true;
+    }
+
+    // Probamos cada empujón
+    for (let i = 0; i < kicks.length; i++) {
+      let dir = kicks[i][0];
+      let steps = kicks[i][1];
+      let opp = kicks[i][2];
+      let stepsTaken = 0;
+
+      // Intentamos dar los pasos indicados
+      while (stepsTaken < steps && this.canMove(this.slide.bind(this), dir)) {
+        this.move(this.slide.bind(this), this.slideCenter.bind(this), dir);
+        stepsTaken++;
+      }
+
+      // Si logramos dar los pasos, comprobamos si AHORA puede rotar
+      if (stepsTaken === steps && this.canMove(this.rotate.bind(this), 'clockwise')) {
+        this.move(this.rotate.bind(this), null, 'clockwise');
+        return true; // Éxito: Rotó gracias al Wall Kick
+      } else {
+        // Fracaso: Deshacemos los pasos exactos que dimos
+        for (let undo = 0; undo < stepsTaken; undo++) {
+          this.move(this.slide.bind(this), this.slideCenter.bind(this), opp);
+        }
+      }
+    }
+
+    // Si termina el bucle, es que ninguna opción funcionó
+    return false; 
   }
 
   // Ejecuta físicamente y lógicamente el movimiento/rotación, borrando el rastro viejo y pintando el nuevo.
@@ -594,7 +638,7 @@ function updateGame() {
 
     if (keyHof.isDown){
         hudJuego.style.display = 'none';
-        game.state.start('hof', true, false, hudUsuario.innerText, puntosActual);
+        game.state.start('hof', true, false, hudUsuario.innerText, puntosActual, nivelSeleccionado, objetivoPuntos);
       }
 
     currentMovementTimer = 0;
@@ -619,11 +663,14 @@ function updateGame() {
       tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'down');
     } 
   } else if (keyRotate.isDown) {
-    // La tecla arriba rota (Sentido horario).
-    // Nota: la rotación de la pieza O no sirve de nada visualmente, pero la lógica lo permite.
-    if (tetromino.canMove(tetromino.rotate.bind(tetromino), 'clockwise'))
-      tetromino.move(tetromino.rotate.bind(tetromino), null, 'clockwise');
-  };
+    // Le pedimos a la pieza que intente rotar usando su nuevo método
+    let rotacionExitosa = tetromino.rotateWithWallKick();
+    
+    // Si no pudo rotar ni con Wall Kick, reproducimos el sonido de choque
+    if (!rotacionExitosa) {
+        if (!sonido_pared.isPlaying) sonido_pared.play();
+    }
+  }
 
   //Actualiza el HUD
   puntos.innerText = puntosActual;

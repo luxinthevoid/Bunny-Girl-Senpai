@@ -15,7 +15,8 @@ function preloadNiveles(){
     game.load.image('n2','assets/imgs/UI/lvl_2.png');
     game.load.image('n3','assets/imgs/UI/lvl_3.png');
     game.load.image('n4','assets/imgs/UI/lvl_4.png');
-
+    game.load.image('n5','assets/lilTung.png');
+    game.load.image('n6','assets/niveles/whysosirius.jpg');
     game.load.audio('sfx_click', 'assets/sonidos/click_button_sound.wav');
     game.load.audio('sfx_hover', 'assets/sonidos/hover_sound.wav');
 
@@ -38,7 +39,7 @@ function createNiveles(){
 
     BGIMG = game.add.image(0,0,'background');
 
-    MNtxtHeader = game.add.text(MNtext_posX,MNtext_posY,'Niveles', estiloTitulo);
+    MNtxtHeader = game.add.text(MNtext_posX,MNtext_posY,'Levels', estiloTitulo);
     MNtxtHeader.anchor.setTo(0.5, 0.5);
 
     MNbtnN1=game.add.button(game.width*0.2,game.height*0.4,'n1',function(){
@@ -80,13 +81,28 @@ function createNiveles(){
     }, this);
 
 
-    MNbtnVolver=game.add.button(MNvolver_posX,MNvolver_posY,'ttt', function(){ mainMenu();
+    MNbtnVolver=game.add.button(MNvolver_posX,MNvolver_posY,'n5', function(){ mainMenu();
         sfxClick.play();}
     );
     MNbtnVolver.inputEnabled = true;
     MNbtnVolver.onInputOver.add(function() {
         sfxHover.play();
     }, this);
+
+    MNbtnVolver.anchor.setTo(.5,.5);
+    MNbtnVolver.scale.setTo(0.3);
+
+
+    MNbtnN6=game.add.button(game.width*0.25,game.height*0.8,'n6', function(){ halloffame();
+        sfxClick.play();}
+    );
+    MNbtnN6.inputEnabled = true;
+    MNbtnN6.onInputOver.add(function() {
+        sfxHover.play();
+    }, this);
+
+    MNbtnN6.anchor.setTo(.5,.5);
+    MNbtnN6.scale.setTo(0.1);
 
 }
 
@@ -96,4 +112,8 @@ function startPlay(nivel){
 
 function mainMenu(){
     game.state.start('init');
+}
+
+function halloffame(){
+    game.state.start('hof');
 }
