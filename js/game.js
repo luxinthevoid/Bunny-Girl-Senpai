@@ -46,6 +46,7 @@ const sonido_win = new Audio('assets/sonidos/win.wav');
 const sonido_timer = new Audio('assets/sonidos/timer.wav');
 const sonido_lose = new Audio('assets/sonidos/lose.wav');
 const sonido_pared = new Audio('assets/sonidos/pared.wav');
+const bgMusic = new Audio('assets/sonidos/8-bit-music-loop.mp3');
 
 /**
  * Clase que gestiona el Tablero (La cuadrícula lógica y visual)
@@ -429,6 +430,9 @@ function resetGame() {
   }else hudObjetivo.innerText = objetivoPuntos;
   
   calcularCheckPoints();
+
+  bgMusic.loop = true;
+  bgMusic.play();
 
   previewShape = Math.floor(Math.random()* modificadorSetTetrominos);
   spawn(); // Nace la primera pieza
