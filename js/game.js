@@ -34,6 +34,10 @@ const OCCUPIED = 2;                 // La celda tiene un bloque fijo (chocó y s
 const sonido_tetromino_spawn = new Audio('assets/sonidos/beep_sound_spawn.wav');
 const sonido_tetromino_chocar = new Audio('assets/sonidos/snap_sound.wav');
 const sonido_hacer_fila = new Audio('assets/sonidos/line_sound.wav');
+const sonido_win = new Audio('assets/sonidos/win.wav');
+const sonido_timer = new Audio('assets/sonidos/timer.wav');
+const sonido_lose = new Audio('assets/sonidos/lose.wav');
+const sonido_pared = new Audio('assets/sonidos/pared.wav');
 
 /**
  * Clase que gestiona el Tablero (La cuadrícula lógica y visual)
@@ -384,6 +388,7 @@ function actualizarReloj(){
   if(tiempoActual==60){
     tiempoActual=0;
     minutos++;
+    sonido_timer.play();
   }
 
   if(minutos<10)
@@ -483,6 +488,7 @@ function setGameOver(on){
       }
     );
     centerText.anchor.set(0.5); // Centra el eje del texto
+    sonido_lose.play();
   }
 };
 
@@ -502,6 +508,7 @@ function setGameWin(on){
       }
     );
     centerText.anchor.set(0.5); // Centra el eje del texto
+    sonido_win.play();
   }
 };
 
@@ -595,12 +602,22 @@ function updateGame() {
   };
 
   // Comprueba flechas: Si pulsas y se puede mover, mueve.
-  if (cursors.left.isDown && tetromino.canMove(tetromino.slide.bind(tetromino), 'left')) {
-    tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'left');
-  } else if (cursors.right.isDown && tetromino.canMove(tetromino.slide.bind(tetromino), 'right')) {
-    tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'right');
-  } else if (cursors.down.isDown && tetromino.canMove(tetromino.slide.bind(tetromino), 'down')) {
-    tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'down');
+  if (cursors.left.isDown){
+    if(tetromino.canMove(tetromino.slide.bind(tetromino), 'left')) {
+      tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'left');
+    } else {
+      if (!sonido_pared.isPlaying) sonido_pared.play();
+    }
+  }else if (cursors.right.isDown){
+    if(tetromino.canMove(tetromino.slide.bind(tetromino), 'right')) {
+      tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'right');
+    } else {
+      if (!sonido_pared.isPlaying) sonido_pared.play();
+    }
+  }else if (cursors.down.isDown){
+    if(tetromino.canMove(tetromino.slide.bind(tetromino), 'down')) {
+      tetromino.move(tetromino.slide.bind(tetromino), tetromino.slideCenter.bind(tetromino), 'down');
+    } 
   } else if (keyRotate.isDown) {
     // La tecla arriba rota (Sentido horario).
     // Nota: la rotación de la pieza O no sirve de nada visualmente, pero la lógica lo permite.
