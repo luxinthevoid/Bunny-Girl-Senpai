@@ -15,6 +15,7 @@ let hofState={
 
 function preloadHof(){
     game.load.image('ttt','assets/lilTung.png');
+    game.load.image('background','assets/imgs/UI/Menu_BG.png');
 }
 
 function tamanyoCanvasJuego(nombreUsuario, puntos, nivelSeleccionado, objetivo){
@@ -31,6 +32,8 @@ function createHof(){
 
     let HOFtext_posX=game.world.width * 0.5;
     let HOFtext_posY=game.world.height * 0.15;
+
+    BGIMG = game.add.image(0,0,'background');
 
     if(nombre!=undefined){
         HOFListaPuntos = HOFListaPuntos+nombre+":   "+nivel+" - "+puntosFinal+"/"+complete+"\n";

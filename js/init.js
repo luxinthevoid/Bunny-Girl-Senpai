@@ -40,6 +40,9 @@ function createInit(){
 
     BGIMG = game.add.image(0,0,'background');
     TetrisTXT = game.add.image(0,game.world.height * 0.1,'tetris');
+    game.add.tween(TetrisTXT).to(
+            { y: TetrisTXT.y + 15 },    
+            1000,Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true  );
 
     //BOTON INICIO
     BotonVolver = game.add.button(game.world.width * 0.5, game.world.height * 0.65,'btnPlay',

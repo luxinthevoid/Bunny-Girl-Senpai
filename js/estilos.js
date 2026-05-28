@@ -15,5 +15,5 @@ let estiloTitulo = {
 let estiloText = {
     fontFamily: 'ari-w9500-bold',
     fontSize: '24px',
-    fill: 'rgb(255, 255, 255)'
+    fill: 'rgb(0, 0, 0)'
 };
